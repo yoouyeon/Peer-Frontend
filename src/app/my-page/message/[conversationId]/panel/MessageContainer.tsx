@@ -3,8 +3,8 @@ import { Modal, Stack, IconButton, Typography, Box } from '@mui/material'
 import CuButton from '@/components/CuButton'
 import * as modalStyle from '@/components/CuModal.style'
 import useMedia from '@/hook/useMedia'
+import useMessageNavigation from '@/hook/useMessageNavigation'
 import ChevronLeft from '@/icons/ChevronLeft'
-import useMessagePageState from '@/states/useMessagePageState'
 import * as style from './MessageContainer.style'
 
 const MessageContainer = ({
@@ -15,7 +15,7 @@ const MessageContainer = ({
   children: ReactNode
 }) => {
   const { isPc } = useMedia()
-  const { setListPage } = useMessagePageState()
+  const { goToMessageList } = useMessageNavigation()
 
   return isPc ? (
     <Stack spacing={'1rem'} sx={style.pcBox}>
@@ -23,7 +23,7 @@ const MessageContainer = ({
         <CuButton
           message={'이 쪽지 나가기'}
           variant="text"
-          action={setListPage}
+          action={goToMessageList}
           style={style.pcGoToListButton}
         />
       </Stack>
@@ -32,7 +32,7 @@ const MessageContainer = ({
       </Stack>
     </Stack>
   ) : (
-    <Modal open={true} onClose={setListPage} keepMounted>
+    <Modal open={true} onClose={goToMessageList} keepMounted>
       <Stack spacing={'1.5rem'} sx={modalStyle.mobileFullSizeWrapper}>
         <Stack
           direction={'row'}
@@ -40,7 +40,7 @@ const MessageContainer = ({
           alignItems={'center'}
           spacing={'1rem'}
         >
-          <IconButton onClick={setListPage}>
+          <IconButton onClick={goToMessageList}>
             <ChevronLeft />
           </IconButton>
           <Stack direction={'row'} spacing={'0.62rem'}>

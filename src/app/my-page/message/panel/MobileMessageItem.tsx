@@ -3,7 +3,7 @@ import { useSWRConfig } from 'swr'
 import { Box, ListItem, ListItemButton, Stack } from '@mui/material'
 import useAxiosWithAuth from '@/api/config'
 import CuButton from '@/components/CuButton'
-import useMessagePageState from '@/states/useMessagePageState'
+import useMessageNavigation from '@/hook/useMessageNavigation'
 import { IMessageListData } from '@/types/IMessage'
 import MessageItemBase from './MessageItemBase'
 import * as style from './MobileMessageItem.style'
@@ -109,11 +109,12 @@ const SwappableMessageItem = ({
 
 const MobileMessageListItem = ({ message }: IMobileMessageListItemProps) => {
   const axiosWithAuth = useAxiosWithAuth()
-  const { setDetailPage } = useMessagePageState()
-  const { targetId, conversationId } = message
   const listItemRef = useRef(null)
   const { openToast } = useToast()
   const { mutate } = useSWRConfig()
+  const { goToMessageDetail } = useMessageNavigation()
+
+  const { targetId, conversationId } = message
 
   const deleteOneMessage = () => {
     axiosWithAuth
@@ -137,7 +138,7 @@ const MobileMessageListItem = ({ message }: IMobileMessageListItemProps) => {
         <ListItemButton
           disableGutters
           ref={listItemRef}
-          onClick={() => setDetailPage(conversationId, targetId)}
+          onClick={() => goToMessageDetail(conversationId, targetId)}
           sx={style.listItemButton}
         >
           <MessageItemBase message={message} />

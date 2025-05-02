@@ -9,21 +9,23 @@ import {
   IconButtonContainer,
 } from '@/components/board/ListPanel'
 import useMedia from '@/hook/useMedia'
-import useTeamPageState from '@/states/useTeamPageState'
 import NoticeList from './panel/NoticeList'
 import Tutorial from '@/components/Tutorial'
 import TeamAnnounceTutorial from '@/components/tutorialContent/TeamAnnounceTutorial'
+import { useRouter } from 'next/navigation'
 
 const TeamNotice = ({ params }: { params: { id: string } }) => {
   const { id: teamId } = params
   const { isPc } = useMedia()
-  const { setNotice } = useTeamPageState()
   const [keyword, setKeyword] = useState<string>('')
+  const router = useRouter()
 
   return (
     <ListPageContainer>
       <TopPageButton>
-        <NewPostButton onClick={() => setNotice('EDIT')} />
+        <NewPostButton
+          onClick={() => router.push(`/teams/${params.id}/edit`)}
+        />
       </TopPageButton>
       <ListBoxContainer>
         <Stack
@@ -42,9 +44,7 @@ const TeamNotice = ({ params }: { params: { id: string } }) => {
           </Stack>
           <IconButtonContainer
             setKeyword={setKeyword}
-            onClickPlus={() => {
-              setNotice('EDIT')
-            }}
+            onClickPlus={() => router.push(`/teams/${params.id}/edit`)}
           />
         </Stack>
         <NoticeList teamId={parseInt(teamId)} keyword={keyword} />

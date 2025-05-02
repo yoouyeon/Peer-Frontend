@@ -9,8 +9,8 @@ import {
   ListItem,
 } from '@/components/board/ListPanel'
 import { useInfiniteSWRScroll } from '@/hook/useInfiniteScroll'
-import useTeamPageState from '@/states/useTeamPageState'
 import { ITeamNotice } from '@/types/TeamBoardTypes'
+import useNoticeRouter from '../hook/useNoticeRouter'
 
 const NoticeList = ({
   teamId,
@@ -20,13 +20,13 @@ const NoticeList = ({
   keyword: string
 }) => {
   const axiosWithAuth = useAxiosWithAuth()
-  const { setNotice } = useTeamPageState()
   const { data, error, isLoading, size, setSize, targetRef } =
     useInfiniteSWRScroll(
       `/api/v1/team-page/notice/${teamId}?keyword=&${keyword}pageSize=${10}`,
       (url: string) => axiosWithAuth.get(url).then((res) => res.data),
     )
   const router = useRouter()
+  const { goToNoticeDetail } = useNoticeRouter()
   useEffect(() => {
     // keyword가 바뀔 때마다 size를 1로 초기화 (다시 첫 페이지부터 불러오기)
     if (!isLoading && size !== 1) setSize(1)
@@ -69,9 +69,12 @@ const NoticeList = ({
                   title={notice.title}
                   authorNickname={notice.nickname}
                   createdAt={notice.createdAt}
-                  onClick={() => {
-                    setNotice('DETAIL', notice.postId)
-                  }}
+                  onClick={() =>
+                    goToNoticeDetail(
+                      teamId.toString(),
+                      notice.postId.toString(),
+                    )
+                  }
                 />
               )
             })}

@@ -1,11 +1,11 @@
 'use client'
 
-import { ReactNode, useEffect } from 'react'
+import { ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
 import { Stack, Container, Box, useMediaQuery } from '@mui/material'
-import useTeamPageState from '@/states/useTeamPageState'
+import useMedia from '@/hook/useMedia'
 import TeamSidebar from './panel/NavBar'
 import * as style from '@/components/NavBarLayout.style'
-import useMedia from '@/hook/useMedia'
 
 const TeamLayout = ({
   params,
@@ -14,20 +14,14 @@ const TeamLayout = ({
   params: { id: string }
   children: ReactNode
 }) => {
-  const { layout, resetState } = useTeamPageState()
   const id = params.id
-
-  useEffect(() => {
-    resetState()
-    return () => {
-      resetState()
-    }
-  }, [])
-
   const isFourRow = useMediaQuery('(min-width:997px)')
   const { isPc } = useMedia()
+  const pathname = usePathname()
 
-  if (layout === 'FULLPAGE') {
+  const isFullPage = pathname.includes('/edit')
+
+  if (isFullPage) {
     return (
       <Container sx={style.container}>
         <Box sx={style.fullPageContentBox}>{children}</Box>

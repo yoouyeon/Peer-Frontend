@@ -10,32 +10,37 @@ import {
 } from '@/components/board/DetailPanel'
 import CuButton from '@/components/CuButton'
 import useMedia from '@/hook/useMedia'
-import useTeamPageState from '@/states/useTeamPageState'
 import useToast from '@/states/useToast'
 import { ITeamNoticeDetail } from '@/types/TeamBoardTypes'
 import CommentList from '@/components/board/CommentList'
 import { CommentForm } from '@/components/board/CommentForm'
 import CuTextModal from '@/components/CuTextModal'
 import useModal from '@/hook/useModal'
+import useNoticeRouter from '../hook/useNoticeRouter'
 
-const TeamNoticeView = ({ params }: { params: { id: string } }) => {
-  const { id: teamId } = params
+interface ITeamNoticeViewParams {
+  id: string
+  noticeId: string
+}
+
+const TeamNoticeView = ({ params }: { params: ITeamNoticeViewParams }) => {
+  const { id: teamId, noticeId } = params
   const axiosWithAuth = useAxiosWithAuth()
-  const { postId, setNotice } = useTeamPageState()
   const { isOpen, openModal, closeModal } = useModal()
   const { data, error, isLoading } = useSWR<ITeamNoticeDetail>(
-    `/api/v1/team-page/post/${postId}`,
+    `/api/v1/team-page/post/${noticeId}`,
     (url: string) => axiosWithAuth.get(url).then((res) => res.data),
   )
   const { isPc } = useMedia()
   const { openToast } = useToast()
+  const { goBack, replaceToNoticeList, goToNoticeEdit } = useNoticeRouter()
 
   const handleDelete = () => {
     axiosWithAuth
-      .delete(`/api/v1/team/post/${postId}`)
+      .delete(`/api/v1/team/post/${noticeId}`)
       .then(() => {
         alert('공지사항을 삭제했습니다.')
-        setNotice('LIST')
+        replaceToNoticeList(teamId)
       })
       .catch(() => {
         openToast({
@@ -45,18 +50,12 @@ const TeamNoticeView = ({ params }: { params: { id: string } }) => {
       })
   }
 
-  const handleGoBack = () => {
-    setNotice('LIST')
-  }
-
-  if (postId === undefined) return null
-
   if (isLoading)
     return (
       <StatusMessage
         boardType={'NOTICE'}
         message={'공지사항을 불러오는 중입니다...'}
-        onClickEditButton={() => setNotice('EDIT', postId)}
+        onClickEditButton={() => goToNoticeEdit(teamId, noticeId)}
         author={!!data?.isAuthor}
       />
     )
@@ -66,18 +65,18 @@ const TeamNoticeView = ({ params }: { params: { id: string } }) => {
       <StatusMessage
         boardType={'NOTICE'}
         message={'문제가 발생했습니다.'}
-        onClickEditButton={() => setNotice('EDIT', postId)}
+        onClickEditButton={() => goToNoticeEdit(teamId, noticeId)}
         author={!!data?.isAuthor}
       />
     )
 
   return (
     <>
-      <DetailPage boardType={'NOTICE'} handleGoBack={handleGoBack}>
+      <DetailPage boardType={'NOTICE'}>
         {isPc && (
           <CuButton
             message={'이전 페이지'}
-            action={handleGoBack}
+            action={goBack}
             variant={'text'}
             TypographyProps={{
               color: 'text.strong',
@@ -88,7 +87,7 @@ const TeamNoticeView = ({ params }: { params: { id: string } }) => {
         )}
         <DetailContentCotainer
           containerTitle={'공지사항'}
-          onClickEditButton={() => setNotice('EDIT', postId)}
+          onClickEditButton={() => goToNoticeEdit(teamId, noticeId)}
           author={data.isAuthor}
         >
           <DetailContent
@@ -113,8 +112,8 @@ const TeamNoticeView = ({ params }: { params: { id: string } }) => {
           )}
         </DetailContentCotainer>
         <Stack>
-          <CommentList postId={postId} />
-          <CommentForm postId={postId} teamId={parseInt(teamId)} />
+          <CommentList postId={parseInt(noticeId)} />
+          <CommentForm postId={parseInt(noticeId)} teamId={parseInt(teamId)} />
         </Stack>
       </DetailPage>
       <CuTextModal

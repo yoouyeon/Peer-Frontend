@@ -3,19 +3,13 @@ import { FormEvent, useEffect, useRef, useState } from 'react'
 import { isAxiosError } from 'axios'
 import { Editor } from '@toast-ui/editor'
 import useAxiosWithAuth from '@/api/config'
-import useTeamPageState from '@/states/useTeamPageState'
 import useToast from '@/states/useToast'
 import { EditForm } from '@/components/board/EditPanel'
 import { IEditFormType } from '@/types/TeamBoardTypes'
+import useNoticeRouter from '../hook/useNoticeRouter'
 
-const NoticeEditForm = ({
-  teamId,
-  postId,
-  type,
-  handleGoBack,
-}: IEditFormType) => {
+const NoticeEditForm = ({ teamId, postId, type }: IEditFormType) => {
   const axiosWithAuth = useAxiosWithAuth()
-  const { setNotice } = useTeamPageState()
   const [previousData, setPreviousData] = useState({
     title: '',
     content: '',
@@ -24,6 +18,8 @@ const NoticeEditForm = ({
   const titleRef = useRef<HTMLInputElement | null>(null)
   const editorRef = useRef<Editor | null>(null)
   const { openToast } = useToast()
+  const { replaceToNoticeList, goToNoticeDetail } = useNoticeRouter()
+
   useEffect(() => {
     if (postId) {
       setIsLoading(true)
@@ -38,13 +34,14 @@ const NoticeEditForm = ({
         })
         .catch(() => {
           alert('글을 불러오는데 실패했습니다.')
-          setNotice('LIST')
+          replaceToNoticeList(teamId)
         })
         .finally(() => {
           setIsLoading(false)
         })
     }
   }, [postId])
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!editorRef.current || !titleRef.current) return
@@ -66,7 +63,7 @@ const NoticeEditForm = ({
         .put(`/api/v1/team/post/${postId}`, form)
         .then(() => {
           alert('공지사항을 수정했습니다.')
-          setNotice('DETAIL', postId)
+          goToNoticeDetail(teamId, postId.toString())
         })
         .catch((e: unknown) => {
           if (isAxiosError(e) && e.response?.status === 403) {
@@ -90,7 +87,7 @@ const NoticeEditForm = ({
         })
         .then((res) => {
           alert('공지사항이 등록되었습니다.')
-          setNotice('DETAIL', res.data.postId)
+          goToNoticeDetail(teamId, res.data.postId.toString())
         })
         .catch((e: unknown) => {
           if (isAxiosError(e) && e.response?.status === 403) {
@@ -116,7 +113,6 @@ const NoticeEditForm = ({
       editorRef={editorRef}
       initialData={previousData}
       type={type}
-      handleGoBack={handleGoBack}
     />
   )
 }

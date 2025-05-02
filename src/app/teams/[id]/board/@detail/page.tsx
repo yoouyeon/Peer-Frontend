@@ -75,7 +75,7 @@ const TeamBoardPostView = ({ params }: { params: { id: string } }) => {
     )
   return (
     <>
-      <DetailPage boardType={'BOARD'} handleGoBack={handleGoBack}>
+      <DetailPage boardType={'BOARD'}>
         {isPc && (
           <CuButton
             message={'이전 페이지'}

@@ -6,6 +6,7 @@ import CuModal from '../CuModal'
 import DynamicToastViewer from '../DynamicToastViewer'
 import * as style from './DetailPanel.style'
 import UTCtoLocalTime from '@/utils/UTCtoLocalTime'
+import { useRouter } from 'next/navigation'
 
 type TBoardType = 'NOTICE' | 'BOARD' | 'JOB'
 
@@ -22,7 +23,6 @@ interface IDetailContentContainerProps {
 
 interface IDetailPageProps extends IChildrenProps {
   boardType: TBoardType
-  handleGoBack: () => void
 }
 
 interface IStatusMessageProps {
@@ -45,12 +45,10 @@ const title: Record<TBoardType, string> = {
   JOB: '채용공고',
 }
 
-export const DetailPage = ({
-  children,
-  boardType,
-  handleGoBack,
-}: IDetailPageProps) => {
+export const DetailPage = ({ children, boardType }: IDetailPageProps) => {
   const { isPc } = useMedia()
+  const router = useRouter()
+
   if (isPc) {
     return (
       <Stack sx={style.DetailPage} spacing={'1.5rem'}>
@@ -62,7 +60,7 @@ export const DetailPage = ({
     <CuModal
       open={true}
       title={title[boardType]}
-      onClose={handleGoBack}
+      onClose={router.back}
       mobileFullSize
     >
       <Stack

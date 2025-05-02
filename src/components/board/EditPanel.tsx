@@ -6,6 +6,7 @@ import CuModal from '../CuModal'
 import DynamicToastEditor from '../DynamicToastEditor'
 import * as style from './EditPanel.style'
 import { Editor } from '@toast-ui/editor'
+import { useRouter } from 'next/navigation'
 
 interface IChildrenProps {
   children: React.ReactNode
@@ -21,22 +22,20 @@ interface IEditFormProps {
     content: string
   }
   type: 'new' | 'edit'
-  handleGoBack: () => void
 }
 
 interface IEditButtonProps {
   type: 'new' | 'edit'
-  handleGoBack: () => void
 }
 
 interface IEditPageProps extends IChildrenProps {
   title: string
-  type: 'new' | 'edit'
-  handleGoBack: () => void
 }
 
-export const EditPage = ({ title, children, handleGoBack }: IEditPageProps) => {
+export const EditPage = ({ title, children }: IEditPageProps) => {
   const { isPc } = useMedia()
+  const router = useRouter()
+
   if (isPc)
     return (
       <Stack spacing={'1.5rem'} width={'100%'}>
@@ -47,7 +46,7 @@ export const EditPage = ({ title, children, handleGoBack }: IEditPageProps) => {
       </Stack>
     )
   return (
-    <CuModal open={true} title={title} onClose={handleGoBack} mobileFullSize>
+    <CuModal open={true} title={title} onClose={router.back} mobileFullSize>
       <Stack sx={{ height: '100%', overflowY: 'scroll' }} spacing={'1.5rem'}>
         {children}
       </Stack>
@@ -73,7 +72,6 @@ export const EditForm = ({
   editorRef,
   initialData,
   type,
-  handleGoBack,
 }: IEditFormProps) => {
   const { isPc } = useMedia()
 
@@ -102,13 +100,14 @@ export const EditForm = ({
           </Box>
         </Stack>
       </Stack>
-      <EditButton type={type} handleGoBack={handleGoBack} />
+      <EditButton type={type} />
     </form>
   )
 }
 
-export const EditButton = ({ type, handleGoBack }: IEditButtonProps) => {
+export const EditButton = ({ type }: IEditButtonProps) => {
   const { isPc } = useMedia()
+  const router = useRouter()
 
   return (
     <Stack
@@ -123,7 +122,7 @@ export const EditButton = ({ type, handleGoBack }: IEditButtonProps) => {
       >
         <CuButton
           variant={'text'}
-          action={handleGoBack}
+          action={router.back}
           message={'취소'}
           TypographyProps={{ color: 'purple.strong' }}
           style={style.EditButton}

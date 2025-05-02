@@ -7,12 +7,7 @@ import useToast from '@/states/useToast'
 import { EditForm } from '@/components/board/EditPanel'
 import { IBoardEditFormType } from '@/types/TeamBoardTypes'
 
-const PostEditForm = ({
-  postId,
-  boardId,
-  type,
-  handleGoBack,
-}: IBoardEditFormType) => {
+const PostEditForm = ({ postId, boardId, type }: IBoardEditFormType) => {
   const axiosWithAuth = useAxiosWithAuth()
   const { setBoard } = useTeamPageState()
   const [previousData, setPreviousData] = useState({
@@ -102,7 +97,6 @@ const PostEditForm = ({
       editorRef={editorRef}
       initialData={previousData}
       type={type}
-      handleGoBack={handleGoBack}
     />
   )
 }

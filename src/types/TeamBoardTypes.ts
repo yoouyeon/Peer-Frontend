@@ -55,7 +55,6 @@ export interface IEditFormType {
   teamId: string
   postId?: number
   type: 'edit' | 'new' // 수정 | 새로 작성
-  handleGoBack: () => void // 취소 버튼
 }
 
 export interface IBoardEditFormType extends IEditFormType {

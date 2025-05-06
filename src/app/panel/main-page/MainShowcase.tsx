@@ -6,6 +6,7 @@ import CuCircularProgress from '@/components/CuCircularProgress'
 import CuPhotoBox from '@/components/CuPhotoBox'
 import DynamicToastViewer from '@/components/DynamicToastViewer'
 import NoDataDolphin from '@/components/NoDataDolphin'
+import API_PATH from '@/constant/apiPath'
 import { IPagination } from '@/types/IPagination'
 import { Box, Stack, Typography, Button, Card, Avatar } from '@mui/material'
 import { useRouter } from 'next/navigation'
@@ -15,7 +16,7 @@ import useSWR from 'swr'
 const MainShowcase = () => {
   const router = useRouter()
   const { data, isLoading, error } = useSWR<IPagination<ICardData[]>>(
-    `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/showcase?page=1&pageSize=10`,
+    `${API_PATH.showcase.get}?page=1&pageSize=10`,
     defaultGetFetcher,
   )
 

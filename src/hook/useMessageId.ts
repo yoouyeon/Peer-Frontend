@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import useTargetId from '@/states/useTargetId'
+import { isNumber } from '@/utils/regex'
 
 const isValidConversationId = (
   id: string | string[] | undefined,
 ): id is string => {
   // 숫자 타입의 파라미터인지 확인
-  return typeof id === 'string' && /^\d+$/.test(id)
+  return typeof id === 'string' && isNumber.test(id)
 }
 
 const useMessageId = () => {

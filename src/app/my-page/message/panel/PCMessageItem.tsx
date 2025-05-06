@@ -1,5 +1,5 @@
 import { Checkbox, ListItem, ListItemButton, Stack } from '@mui/material'
-import useMessagePageState from '@/states/useMessagePageState'
+import useMessageNavigation from '@/hook/useMessageNavigation'
 import { IMessageListData } from '@/types/IMessage'
 import MessageItemBase from './MessageItemBase'
 import * as style from './PCMessageListItem.style'
@@ -17,7 +17,8 @@ export const PCMessageListItem = ({
   isChecked,
   toggleSelectUser,
 }: IPCMessageListItemProps) => {
-  const { setDetailPage } = useMessagePageState()
+  const { goToMessageDetail } = useMessageNavigation()
+
   const label = { inputProps: { 'aria-label': 'MessageItem Checkbox' } }
   const { targetId, conversationId } = message
 
@@ -28,7 +29,7 @@ export const PCMessageListItem = ({
         onClick={
           isManageMode
             ? () => toggleSelectUser(conversationId)
-            : () => setDetailPage(conversationId, targetId)
+            : () => goToMessageDetail(conversationId, targetId)
         }
       >
         <Stack

@@ -6,7 +6,8 @@ import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import useAxiosWithAuth from '@/api/config'
 import useMedia from '@/hook/useMedia'
 import { useMessageInfiniteScroll } from '@/hook/useInfiniteScroll'
-import useMessagePageState from '@/states/useMessagePageState'
+import useMessageId from '@/hook/useMessageId'
+import useMessageNavigation from '@/hook/useMessageNavigation'
 import { IMessage, IMessageUser, IMessageTargetUser } from '@/types/IMessage'
 import MessageForm from './panel/MessageForm'
 import MessageContainer from './panel/MessageContainer'
@@ -16,7 +17,7 @@ import MobileSendButton from './panel/MobileSendButton'
 import * as style from './page.style'
 
 const MessageChatPage = () => {
-  const { conversationId, targetId, setListPage } = useMessagePageState()
+  const { conversationId, targetId, resetTargetId } = useMessageId()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [updatedData, setUpdatedData] = useState<IMessage[] | undefined>()
   const [owner, setOwner] = useState<IMessageUser | undefined>()
@@ -28,7 +29,7 @@ const MessageChatPage = () => {
   const axiosWithAuth = useAxiosWithAuth()
   const { isPc } = useMedia()
   const [isMessageSending, setIsMessageSending] = useState(false)
-
+  const { goToMessageList } = useMessageNavigation()
   const fetchMoreData = useCallback(
     async (url: string) => {
       if (!updatedData) return []
@@ -41,10 +42,10 @@ const MessageChatPage = () => {
         return response.data.msgList
       } catch {
         alert('쪽지를 불러오는데 실패하였습니다.')
-        setListPage()
+        goToMessageList()
       }
     },
-    [conversationId, targetId, updatedData],
+    [conversationId, targetId, updatedData, goToMessageList],
   )
 
   const { trigger, data } = useSWRMutation(
@@ -80,12 +81,12 @@ const MessageChatPage = () => {
       })
       .catch(() => {
         alert('쪽지를 불러오는데 실패하였습니다.')
-        setListPage()
+        goToMessageList()
       })
       .finally(() => {
         setIsLoading(false)
       })
-  }, [targetId, conversationId])
+  }, [targetId, conversationId, goToMessageList])
 
   useEffect(() => {
     if (!data) return
@@ -108,6 +109,13 @@ const MessageChatPage = () => {
     }
     scrollTo(scrollRef.current.scrollHeight)
   }, [updatedData])
+
+  useEffect(() => {
+    return () => {
+      // unmount 시에 targetId 초기화
+      resetTargetId()
+    }
+  }, [resetTargetId])
 
   const addNewMessage = useCallback((newMessage: IMessage) => {
     setUpdatedData((currentData) => {

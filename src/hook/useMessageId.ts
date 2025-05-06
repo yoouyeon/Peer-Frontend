@@ -20,7 +20,7 @@ const useMessageId = () => {
     : null
 
   useEffect(() => {
-    if (!conversationId || !targetId) {
+    if (!(conversationId && targetId)) {
       router.replace('/my-page/message')
     }
   }, [conversationId, router, targetId])

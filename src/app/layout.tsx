@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import '../../styles/global.css'
 import '../../styles/reset.css'
 import MuiThemeProvider from '@/app/panel/MuiThemeProvider'
+import { MswProvider } from '@/mocks/MswProvider'
 import CuSWRConfig from './panel/CuSWRConfig'
 import MainLayout from './panel/MainLayout'
 import { Pretendard } from './panel/font'
@@ -79,17 +80,19 @@ export default function RootLayout({
         {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS ? (
           <GoogleAnalytics ga_id={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS} />
         ) : null}
-        <AppRouterCacheProvider>
-          <CuSWRConfig>
-            <MuiThemeProvider>
-              <DataPickerProvider>
-                <MainLayout>{children}</MainLayout>
-                <div id="modal-root"></div>
-                <ToastNotification />
-              </DataPickerProvider>
-            </MuiThemeProvider>
-          </CuSWRConfig>
-        </AppRouterCacheProvider>
+        <MswProvider>
+          <AppRouterCacheProvider>
+            <CuSWRConfig>
+              <MuiThemeProvider>
+                <DataPickerProvider>
+                  <MainLayout>{children}</MainLayout>
+                  <div id="modal-root"></div>
+                  <ToastNotification />
+                </DataPickerProvider>
+              </MuiThemeProvider>
+            </CuSWRConfig>
+          </AppRouterCacheProvider>
+        </MswProvider>
       </body>
     </html>
   )

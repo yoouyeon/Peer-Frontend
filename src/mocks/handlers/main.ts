@@ -4,10 +4,15 @@ import API_PATH from '@/constant/apiPath'
 import HTTP_STATUS from '@/constant/httpStatus'
 import { EApiType } from '@/types/EApiType'
 import {
+  MOCK_ACCESS_TOKEN,
   MOCK_INIT_CODE,
   MOCK_INIT_SECRET,
+  MOCK_REFRESH_TOKEN,
+  MOCK_SIGN_UP_EMAIL,
+  MOCK_SIGN_UP_PASSWORD,
   MOCK_VERIFY_CODE,
   MOCK_VERIFY_SEED,
+  REFRESH_TOKEN_EXPIRATION_TIME,
 } from '../constants'
 
 type InitResponse = {
@@ -34,7 +39,9 @@ type ReceiveBody = {
   token: string
 }
 
-type ReceiveResponse = null
+type ReceiveResponse = null | {
+  accessToken: string
+}
 
 // /receive 에서 처리할 api
 let apiType: EApiType | null = null
@@ -89,8 +96,7 @@ export const handlers = [
   http.post<PathParams, ReceiveBody, ReceiveResponse | ErrorResponse>(
     '/api/v1/main/receive',
     async ({ request }) => {
-      // const { code, token } = await request.json()
-      const { code } = await request.json()
+      const { code, token } = await request.json()
 
       if (code !== MOCK_VERIFY_CODE) {
         return HttpResponse.json(
@@ -100,14 +106,39 @@ export const handlers = [
       }
 
       try {
-        // JWT 토큰 복호화 - 로그인 시에 사용
-        // const secretKey = await new TextEncoder().encode(MOCK_VERIFY_SEED)
-        // const { payload } = await jose.jwtVerify(token, secretKey)
+        // JWT 토큰 복호화
+        const secretKey = await new TextEncoder().encode(MOCK_VERIFY_SEED)
+        const { payload } = await jose.jwtVerify(token, secretKey)
 
         // /get에서 받은 apiType에 따라 분기 처리
         switch (apiType) {
           case EApiType.SIGN_UP:
             return HttpResponse.json(null, { status: HTTP_STATUS.ok })
+          case EApiType.SIGN_IN: {
+            const { userEmail, password } = payload
+            if (
+              !(
+                userEmail === MOCK_SIGN_UP_EMAIL &&
+                password === MOCK_SIGN_UP_PASSWORD
+              )
+            ) {
+              return HttpResponse.json(
+                { message: 'Email 혹은 비밀번호가 잘못되었습니다!' },
+                { status: HTTP_STATUS.unauthorized },
+              )
+            }
+            return HttpResponse.json(
+              { accessToken: MOCK_ACCESS_TOKEN },
+              {
+                status: HTTP_STATUS.ok,
+                headers: {
+                  'Set-Cookie': `refreshToken=${MOCK_REFRESH_TOKEN}; Path=/; HttpOnly; Secure; Max-Age=${
+                    REFRESH_TOKEN_EXPIRATION_TIME / 1000
+                  }`,
+                },
+              },
+            )
+          }
           default:
             return HttpResponse.json(
               { message: '비정상적인 접근입니다.' },

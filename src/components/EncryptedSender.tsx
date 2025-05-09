@@ -75,7 +75,7 @@ const EncryptedSender = ({
     } else {
       await axiosWithAuth
         .post(
-          `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/main/receive`,
+          API_PATH.main.receive,
           {
             code: verifyCode,
             token: payloadToken,

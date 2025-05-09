@@ -15,6 +15,9 @@ const API_PATH = {
     code: `${BASE_URL}/api/v1/signup/code`,
     nickname: `${BASE_URL}/api/v1/signup/nickname`,
   },
+  signin: {
+    reissue: `${BASE_URL}/api/v1/signin/reissue`,
+  },
   // 민감 정보 암호화를 위한 API
   main: {
     init: `${BASE_URL}/api/v1/main/init`,

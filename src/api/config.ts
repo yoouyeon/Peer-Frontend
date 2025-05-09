@@ -1,6 +1,7 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from 'axios'
 import useAuthStore from '@/states/useAuthStore'
 import { useRouter } from 'next/navigation'
+import API_PATH from '@/constant/apiPath'
 
 const useAxiosWithAuth = () => {
   const accessToken = useAuthStore.getState().accessToken
@@ -40,7 +41,7 @@ const useAxiosWithAuth = () => {
           isRefreshing = true
           try {
             // accessToken 갱신 요청
-            const response = await axiosInstance.get('/api/v1/signin/reissue', {
+            const response = await axiosInstance.get(API_PATH.signin.reissue, {
               withCredentials: true,
             })
             const newAccessToken = response.data.accessToken

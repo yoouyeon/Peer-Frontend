@@ -1,5 +1,6 @@
 import useAxiosWithAuth from '@/api/config'
 import { getToken } from '@/api/jwtToken'
+import API_PATH from '@/constant/apiPath'
 import { EApiType } from '@/types/EApiType'
 import axios from 'axios'
 import React, { useCallback, useEffect } from 'react'
@@ -35,19 +36,17 @@ const EncryptedSender = ({
     }
 
     const { initSecret, initCode }: { initSecret: string; initCode: string } =
-      await axios
-        .get(`${process.env.NEXT_PUBLIC_CSR_API}/api/v1/main/init`)
-        .then((res) => {
-          return {
-            initSecret: res.data.secret,
-            initCode: res.data.code,
-          }
-        })
+      await axios.get(API_PATH.main.init).then((res) => {
+        return {
+          initSecret: res.data.secret,
+          initCode: res.data.code,
+        }
+      })
 
     const initToken = await getToken({ apiType: apiType }, initSecret)
 
     const { verifyCode, verifySeed } = await axios
-      .post(`${process.env.NEXT_PUBLIC_CSR_API}/api/v1/main/get`, {
+      .post(API_PATH.main.get, {
         code: initCode,
         token: initToken,
       })
@@ -63,7 +62,7 @@ const EncryptedSender = ({
     if (!needToken) {
       await axios
         .post(
-          `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/main/receive`,
+          API_PATH.main.receive,
           {
             code: verifyCode,
             token: payloadToken,

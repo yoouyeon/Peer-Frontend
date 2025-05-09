@@ -10,6 +10,11 @@ const API_PATH = {
   showcase: {
     get: `${BASE_URL}/api/v1/showcase`,
   },
+  signup: {
+    email: `${BASE_URL}/api/v1/signup/email`,
+    code: `${BASE_URL}/api/v1/signup/code`,
+    nickname: `${BASE_URL}/api/v1/signup/nickname`,
+  },
 } as const
 
 export default API_PATH

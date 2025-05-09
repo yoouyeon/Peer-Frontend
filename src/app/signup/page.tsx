@@ -18,9 +18,10 @@ import useToast from '@/states/useToast'
 import * as style from './signup.style'
 import EncryptedSender from '@/components/EncryptedSender'
 import { EApiType } from '@/types/EApiType'
+import API_PATH from '@/constant/apiPath'
+import { isEmail, isValidNicknameCharacter } from '@/utils/regex'
 
 const SignUp = () => {
-  const API_URL = process.env.NEXT_PUBLIC_CSR_API
   const router = useRouter()
   const searchParams = useSearchParams()
   const socialEmail = searchParams.get('social-email')
@@ -106,15 +107,18 @@ const SignUp = () => {
         message: '이메일을 확인해주세요',
       })
     } else {
-      await axios
-        .post(`${API_URL}/api/v1/signup/email`, {
+      axios
+        .post(API_PATH.signup.email, {
           email: email,
         })
-        .then(() => {
+        .then((response) => {
           setEmailSendStatus('submit')
           openToast({
             severity: 'info',
-            message: '인증코드가 발송되었습니다.',
+            message: `인증코드가 발송되었습니다. : ${
+              // NOTE: 개발환경에서는 코드 바로 확인 가능
+              process.env.NODE_ENV === 'development' ? response.data?.code : ''
+            }`,
           })
         })
         .catch((error) => {
@@ -152,7 +156,7 @@ const SignUp = () => {
       })
     } else {
       try {
-        await axios.post(`${API_URL}/api/v1/signup/code`, {
+        await axios.post(API_PATH.signup.code, {
           email: email,
           code: code,
         })
@@ -222,7 +226,7 @@ const SignUp = () => {
       })
     }
     try {
-      await axios.post(`${API_URL}/api/v1/signup/nickname`, {
+      await axios.post(API_PATH.signup.nickname, {
         nickname: nickName,
       })
       setNickNameSendStatus('submit')
@@ -304,7 +308,7 @@ const SignUp = () => {
                   rules={{
                     required: '이메일을 입력하세요',
                     pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                      value: isEmail,
                       message: '유효한 이메일 형식이 아닙니다',
                     },
                   }}
@@ -403,7 +407,7 @@ const SignUp = () => {
                       message: '닉네임은 30자 이하여야 합니다',
                     },
                     pattern: {
-                      value: /^[가-힣a-zA-Z0-9]+$/i,
+                      value: isValidNicknameCharacter,
                       message: '한글, 영문, 숫자만 사용할 수 있습니다',
                     },
                   }}

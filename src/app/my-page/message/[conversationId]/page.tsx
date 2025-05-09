@@ -8,7 +8,13 @@ import useMedia from '@/hook/useMedia'
 import { useMessageInfiniteScroll } from '@/hook/useInfiniteScroll'
 import useMessageId from '@/hook/useMessageId'
 import useMessageNavigation from '@/hook/useMessageNavigation'
-import { IMessage, IMessageUser, IMessageTargetUser } from '@/types/IMessage'
+import {
+  IMessage,
+  IMessageUser,
+  IMessageTargetUser,
+  IConversationList,
+} from '@/types/IMessage'
+import API_PATH from '@/constant/apiPath'
 import MessageForm from './panel/MessageForm'
 import MessageContainer from './panel/MessageContainer'
 import MessageHeader from './panel/PcHeader'
@@ -69,9 +75,9 @@ const MessageChatPage = () => {
   useEffect(() => {
     setIsLoading(true)
     axiosWithAuth
-      .post('/api/v1/message/conversation-list', {
+      .post<IConversationList>(API_PATH.message.conversationList, {
         targetId,
-        conversationalId: conversationId,
+        conversationId,
       })
       .then((response) => {
         setUpdatedData(response.data.msgList)

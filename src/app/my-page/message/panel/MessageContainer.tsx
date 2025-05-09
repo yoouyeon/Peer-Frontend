@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { AxiosResponse } from 'axios'
 import { Stack } from '@mui/material'
 import useAxiosWithAuth from '@/api/config'
+import API_PATH from '@/constant/apiPath'
 import { IMessageListData } from '@/types/IMessage'
 import useSelectCheckBox from '@/hook/useSelectCheckbox'
 import useMedia from '@/hook/useMedia'
@@ -68,7 +69,7 @@ const MessageContainer = ({
       conversationId,
     }))
     axiosInstance
-      .delete('/api/v1/message/delete-message', {
+      .delete(API_PATH.message.deleteMessage, {
         data: {
           target: requestBody,
         },

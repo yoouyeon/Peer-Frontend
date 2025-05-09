@@ -8,6 +8,7 @@ import { IMessageListData } from '@/types/IMessage'
 import MessageItemBase from './MessageItemBase'
 import * as style from './MobileMessageItem.style'
 import useToast from '@/states/useToast'
+import API_PATH from '@/constant/apiPath'
 
 /* ANCHOR - interface */
 interface ITouchState {
@@ -118,7 +119,7 @@ const MobileMessageListItem = ({ message }: IMobileMessageListItemProps) => {
 
   const deleteOneMessage = () => {
     axiosWithAuth
-      .delete('/api/v1/message/delete-message', {
+      .delete(API_PATH.message.deleteMessage, {
         data: { target: [{ conversationId }] },
       })
       .then(() => {

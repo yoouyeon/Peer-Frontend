@@ -21,6 +21,15 @@ const API_PATH = {
   profile: {
     get: `${BASE_URL}/api/v1/profile`,
   },
+  message: {
+    list: `${BASE_URL}/api/v1/message/list`,
+    deleteMessage: `${BASE_URL}/api/v1/message/delete-message`,
+    searching: `${BASE_URL}/api/v1/message/searching`,
+    conversationList: `${BASE_URL}/api/v1/message/conversation-list`,
+  },
+  myPortfolio: {
+    list: `${BASE_URL}/api/v1/myPortfolio/list`,
+  },
   noti: {
     summary: `${BASE_URL}/api/v1/noti/summary`,
   },

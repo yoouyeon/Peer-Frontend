@@ -31,6 +31,12 @@ export interface IMessageTargetUser extends IMessageUser {
   deleted: boolean
 }
 
+export interface IConversationList {
+  msgOwner: IMessageUser
+  msgTarget: IMessageTargetUser
+  msgList: IMessage[]
+}
+
 // 메시지 전송 타입
 
 export interface IMessageTarget {

@@ -13,6 +13,7 @@ import * as style from './NewMessageModal.style'
 import useToast from '@/states/useToast'
 import { isAxiosError } from 'axios'
 import useMedia from '@/hook/useMedia'
+import API_PATH from '@/constant/apiPath'
 
 interface INewMessageModalProps {
   isOpen: boolean
@@ -64,7 +65,7 @@ const NewMessageModal = ({
     }
 
     try {
-      const response = await axiosInstance.post('/api/v1/message/searching', {
+      const response = await axiosInstance.post(API_PATH.message.searching, {
         keyword: keyword,
       })
       response.data

@@ -24,6 +24,7 @@ import useSWR from 'swr'
 import { IUserProfile } from '@/types/IUserProfile'
 import useAxiosWithAuth from '@/api/config'
 import { navContainerStyle, navStyle } from '@/app/panel/layout-panel/Nav.style'
+import API_PATH from '@/constant/apiPath'
 
 const PcNav = () => {
   const [value, setValue] = useState<
@@ -39,7 +40,7 @@ const PcNav = () => {
     : '/login?redirect=/my-page/interests'
 
   const { data: profileData } = useSWR<IUserProfile>(
-    isLogin ? `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/profile` : undefined,
+    isLogin ? API_PATH.profile.get : undefined,
     (url: string) => axiosWithAuth.get(url).then((res) => res.data),
   )
 

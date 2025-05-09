@@ -8,6 +8,7 @@ import ProfileLinkEditor from './panel/ProfileLinkEditor'
 import useSWR from 'swr'
 import useAxiosWithAuth from '@/api/config'
 import useAuthStore from '@/states/useAuthStore'
+import API_PATH from '@/constant/apiPath'
 import CuButton from '@/components/CuButton'
 import { useRouter } from 'next/navigation'
 import MyInfoCard from './panel/MyInfoCard'
@@ -30,9 +31,8 @@ const MyProfile = () => {
     error,
     isLoading,
     mutate,
-  } = useSWR<IUserProfile>(
-    `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/profile`,
-    (url: string) => axiosWithAuth.get(url).then((res) => res.data),
+  } = useSWR<IUserProfile>(API_PATH.profile.get, (url: string) =>
+    axiosWithAuth.get(url).then((res) => res.data),
   )
 
   const { isPc } = useMedia()

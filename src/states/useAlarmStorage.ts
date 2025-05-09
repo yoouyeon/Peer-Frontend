@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import useAuthStore from './useAuthStore'
 import axios from 'axios'
+import API_PATH from '@/constant/apiPath'
 
 export enum AlarmType {
   ALL = 'ALL',
@@ -41,7 +42,7 @@ const useAlarmStorage = create<IStoreAlarmState>((set) => {
         return
       }
       axios
-        .get(`${process.env.NEXT_PUBLIC_CSR_API}/api/v1/noti/summary`, {
+        .get(API_PATH.noti.summary, {
           headers: { Authorization: `Bearer ${accessToken}` },
         })
         .then((res) => {

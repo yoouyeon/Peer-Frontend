@@ -18,6 +18,12 @@ const API_PATH = {
   signin: {
     reissue: `${BASE_URL}/api/v1/signin/reissue`,
   },
+  profile: {
+    get: `${BASE_URL}/api/v1/profile`,
+  },
+  noti: {
+    summary: `${BASE_URL}/api/v1/noti/summary`,
+  },
   // 민감 정보 암호화를 위한 API
   main: {
     init: `${BASE_URL}/api/v1/main/init`,

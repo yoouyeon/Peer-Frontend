@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import LocalStorage from './localStorage'
 import axios from 'axios'
 import useNicknameStore from './useNicknameStore'
+import API_PATH from '@/constant/apiPath'
 
 interface IAuthStore {
   isLogin: boolean
@@ -25,7 +26,7 @@ const useAuthStore = create<IAuthStore>((set) => {
       const authDataToSave = { accessToken }
       LocalStorage.setItem('authData', JSON.stringify(authDataToSave))
       axios
-        .get(`${API_URL}/api/v1/profile`, {
+        .get(API_PATH.profile.get, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

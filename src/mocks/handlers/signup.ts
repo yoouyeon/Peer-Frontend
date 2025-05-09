@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw'
 import API_PATH from '@/constant/apiPath'
 import HTTP_STATUS from '@/constant/httpStatus'
 import { isEmail, isValidNickname } from '@/utils/regex'
+import { ErrorResponse } from '../types'
 import {
   EXISTING_EMAIL,
   EXISTING_NICKNAME,
@@ -25,11 +26,6 @@ type CodeRequest = {
 type NicknameRequest = {
   nickname: string
 }
-
-type ErrorResponse = {
-  message: string
-}
-
 export const handlers = [
   // 이메일 인증 요청
   http.post<never, EmailRequest, EmailResponse | ErrorResponse>(

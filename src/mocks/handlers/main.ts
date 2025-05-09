@@ -3,6 +3,7 @@ import * as jose from 'jose'
 import API_PATH from '@/constant/apiPath'
 import HTTP_STATUS from '@/constant/httpStatus'
 import { EApiType } from '@/types/EApiType'
+import { ErrorResponse } from '../types'
 import {
   MOCK_ACCESS_TOKEN,
   MOCK_INIT_CODE,
@@ -28,10 +29,6 @@ type PostGetBody = {
 type PostGetResponse = {
   code: string
   seed: string
-}
-
-type ErrorResponse = {
-  message: string
 }
 
 type ReceiveBody = {

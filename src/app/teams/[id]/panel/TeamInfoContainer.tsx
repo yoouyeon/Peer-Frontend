@@ -11,6 +11,7 @@ import { StatusIcon, IconInfo } from './TeamInfoComponent'
 import * as style from './TeamInfoContainer.style'
 import { isAxiosError } from 'axios'
 import useMedia from '@/hook/useMedia'
+import API_PATH from '@/constant/apiPath'
 import { TeamMemberListMobile, TeamMemberListPc } from './TeamMemberList'
 
 export interface ITeamMemberInfo {
@@ -24,7 +25,7 @@ const TeamInfoContainer = ({ id }: { id: number }) => {
   const axiosInstance = useAxiosWithAuth()
   // 팀의 정보를 불러오는 API 호출
   const { data, error, isLoading } = useSWR<ITeamInfo>(
-    `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/team/main/${id}`,
+    `${API_PATH.team.main}/${id}`,
     (url: string) => axiosInstance(url).then((res) => res.data),
   )
   // 팀원의 정보를 불러오는 API 호출 -> 추후 API 통합이 필요

@@ -36,6 +36,8 @@ const API_PATH = {
   },
   team: {
     list: `${BASE_URL}/api/v1/team/list`,
+    main: `${BASE_URL}/api/v1/team/main`,
+    member: `${BASE_URL}/api/v1/team/main/member`,
   },
   // 민감 정보 암호화를 위한 API
   main: {

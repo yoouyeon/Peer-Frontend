@@ -34,6 +34,9 @@ const API_PATH = {
   noti: {
     summary: `${BASE_URL}/api/v1/noti/summary`,
   },
+  team: {
+    list: `${BASE_URL}/api/v1/team/list`,
+  },
   // 민감 정보 암호화를 위한 API
   main: {
     init: `${BASE_URL}/api/v1/main/init`,

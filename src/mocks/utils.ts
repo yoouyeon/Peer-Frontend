@@ -1,4 +1,4 @@
-import { HttpResponse, JsonBodyType, StrictRequest, StrictResponse } from 'msw'
+import { HttpResponse, StrictRequest, StrictResponse } from 'msw'
 import HTTP_STATUS from '@/constant/httpStatus'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/constants'
 

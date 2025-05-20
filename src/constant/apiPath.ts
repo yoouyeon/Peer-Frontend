@@ -6,6 +6,7 @@ const BASE_URL =
 const API_PATH = {
   recruit: {
     get: `${BASE_URL}/api/v1/recruit`,
+    favorite: `${BASE_URL}/api/v1/recruit/favorite`,
   },
   showcase: {
     get: `${BASE_URL}/api/v1/showcase`,

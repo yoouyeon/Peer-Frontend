@@ -16,6 +16,7 @@ import useAuthStore from '@/states/useAuthStore'
 import useAxiosWithAuth from '@/api/config'
 import Tutorial from '@/components/Tutorial'
 import RecruitPageTutorial from '@/components/tutorialContent/RecruitPageTutorial'
+import API_PATH from '@/constant/apiPath'
 
 const RecruitDetailPage = ({
   data,
@@ -35,9 +36,7 @@ const RecruitDetailPage = ({
   const axiosInstance = useAxiosWithAuth()
 
   const { data: favoriteData } = useSWR<boolean>(
-    isLogin
-      ? `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/recruit/favorite/${id}`
-      : null,
+    isLogin ? `${API_PATH.recruit.favorite}/${id}` : null,
     (url: string) => axiosInstance.get(url).then((res) => res.data),
   )
 

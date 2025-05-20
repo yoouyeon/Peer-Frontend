@@ -1,7 +1,10 @@
 import { http, HttpResponse, DefaultBodyType } from 'msw'
 import API_PATH from '@/constant/apiPath'
+import HTTP_STATUS from '@/constant/httpStatus'
 import { IPagination } from '@/types/IPagination'
 import { IPost } from '@/types/IPostDetail'
+import { ErrorResponse } from '@/mocks/types'
+import { validateAccessToken } from '@/mocks/utils'
 
 type GetRecruitParams = {}
 type GetRecruitResponse = IPagination<IPost[]>
@@ -50,6 +53,16 @@ export const handlers = [
         },
         empty: true,
       })
+    },
+  ),
+  http.post<never, never, null | ErrorResponse>(
+    `${API_PATH.recruit.favorite}/:recruitId`,
+    ({ request }) => {
+      const tokenValidationResult = validateAccessToken(request)
+      if (tokenValidationResult.isValid === false)
+        return tokenValidationResult.response
+
+      return HttpResponse.json(null, { status: HTTP_STATUS.ok })
     },
   ),
 ]

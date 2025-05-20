@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import useAxiosWithAuth from '@/api/config'
 import { Favorite } from '@mui/icons-material'
 import { IconButton, Tooltip } from '@mui/material'
+import API_PATH from '@/constant/apiPath'
 
 const FavoriteButton = ({
   favorite,
@@ -34,9 +35,7 @@ const FavoriteButton = ({
       if (onFavorite) {
         onFavorite()
       } else {
-        await axiosInstance.post(
-          `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/recruit/favorite/${recruit_id}`,
-        )
+        await axiosInstance.post(`${API_PATH.recruit.favorite}/${recruit_id}`)
       }
     } catch (e) {
       setIsFavorite(!isFavorite)

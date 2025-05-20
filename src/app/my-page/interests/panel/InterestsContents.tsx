@@ -7,6 +7,7 @@ import { ITag, ProjectType } from '@/types/IPostDetail'
 import MainCard from '@/app/panel/main-page/MainCard'
 import useAxiosWithAuth from '@/api/config'
 import CuCircularProgress from '@/components/CuCircularProgress'
+import API_PATH from '@/constant/apiPath'
 
 const InterestsContents = ({
   postList,
@@ -33,9 +34,7 @@ const InterestsContents = ({
 
   const handleDefaultUnfavorite = (recruit_id: number) => () => {
     axiosInstance
-      .post(
-        `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/recruit/favorite/${recruit_id}`,
-      )
+      .post(`${API_PATH.recruit.favorite}/${recruit_id}`)
       .then(() => {
         setPostList((prev) =>
           prev.filter((post) => post.recruit_id !== recruit_id),

@@ -17,13 +17,14 @@ import CuTextModal from '@/components/CuTextModal'
 import useModal from '@/hook/useModal'
 import { CommentForm } from '@/components/board/CommentForm'
 import CommentList from '@/components/board/CommentList'
+import API_PATH from '@/constant/apiPath'
 
 const TeamBoardPostView = ({ params }: { params: { id: string } }) => {
   const { id: teamId } = params
   const axiosWithAuth = useAxiosWithAuth()
   const { boardId, postId, setBoard } = useTeamPageState()
   const { data, error, isLoading } = useSWR<ITeamPostDetail>(
-    `/api/v1/team-page/post/${postId}`,
+    `${API_PATH.teamPage.post}/${postId}`,
     (url: string) => axiosWithAuth.get(url).then((res) => res.data),
   )
   const { isPc } = useMedia()

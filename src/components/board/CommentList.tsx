@@ -12,6 +12,7 @@ import useToast from '@/states/useToast'
 import { ITeamComment } from '@/types/TeamBoardTypes'
 import CuTextModal from '../CuTextModal'
 import useModal from '@/hook/useModal'
+import API_PATH from '@/constant/apiPath'
 
 interface ICommentProps {
   comment: ITeamComment
@@ -34,12 +35,12 @@ const Comment = ({ comment, postId }: ICommentProps) => {
       return
     }
     axiosWithAuth
-      .put(`/api/v1/team/post/comment/${comment.commentId}`, {
+      .put(`${API_PATH.team.comment}/${comment.commentId}`, {
         content,
       })
       .then(() => {
         openToast({ severity: 'success', message: '댓글을 수정했습니다.' })
-        mutate(`/api/v1/team/post/comment/${postId}`) // 댓글 데이터 만료
+        mutate(`${API_PATH.team.comment}/${postId}`) // 댓글 데이터 만료
         setIsEditMode(false)
       })
       .catch(() => {
@@ -49,10 +50,10 @@ const Comment = ({ comment, postId }: ICommentProps) => {
 
   const handleDelete = () => {
     axiosWithAuth
-      .delete(`/api/v1/team/post/comment/${comment.commentId}`)
+      .delete(`${API_PATH.team.comment}/${comment.commentId}`)
       .then(() => {
         openToast({ severity: 'success', message: '댓글을 삭제했습니다.' })
-        mutate(`/api/v1/team/post/comment/${postId}`) // 댓글 데이터 만료
+        mutate(`${API_PATH.team.comment}/${postId}`) // 댓글 데이터 만료
       })
       .catch(() => {
         openToast({ severity: 'error', message: '댓글 삭제에 실패했습니다.' })
@@ -89,7 +90,7 @@ const Comment = ({ comment, postId }: ICommentProps) => {
 const CommentList = ({ postId }: { postId: number }) => {
   const axiosWithAuth = useAxiosWithAuth()
   const { data, isLoading, error } = useSWR(
-    `/api/v1/team/post/comment/${postId}`,
+    `${API_PATH.team.comment}/${postId}`,
     (url: string) => axiosWithAuth.get(url).then((res) => res.data),
   )
 

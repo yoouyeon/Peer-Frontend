@@ -31,9 +31,8 @@ const TeamInfoContainer = ({ id }: { id: number }) => {
   // 팀원의 정보를 불러오는 API 호출 -> 추후 API 통합이 필요
   const { data: memberData, isLoading: memberIsLoading } = useSWR<
     Array<ITeamMemberInfo>
-  >(
-    `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/team/main/member/${id}`,
-    (url: string) => axiosInstance(url).then((res) => res.data),
+  >(`${API_PATH.team.member}/${id}`, (url: string) =>
+    axiosInstance(url).then((res) => res.data),
   )
 
   const { setHeaderTitle } = useHeaderStore()

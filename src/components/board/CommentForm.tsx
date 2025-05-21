@@ -3,6 +3,7 @@ import { useSWRConfig } from 'swr'
 import useAxiosWithAuth from '@/api/config'
 import { CommentFormContainer } from '@/components/board/CommentPanel'
 import useToast from '@/states/useToast'
+import API_PATH from '@/constant/apiPath'
 
 interface ICommentFormProps {
   postId: number
@@ -27,7 +28,7 @@ export const CommentForm = ({ postId, teamId }: ICommentFormProps) => {
       return
     }
     axiosWithAuth
-      .post('/api/v1/team/post/comment/', {
+      .post(API_PATH.team.comment, {
         teamId: teamId,
         postId: postId,
         content,
@@ -35,7 +36,7 @@ export const CommentForm = ({ postId, teamId }: ICommentFormProps) => {
       .then(() => {
         setIsLoading(false)
         textRef.current && textRef.current.value && (textRef.current.value = '')
-        mutate(`/api/v1/team/post/comment/${postId}`) // 댓글 데이터 만료
+        mutate(`${API_PATH.team.comment}/${postId}`) // 댓글 데이터 만료
       })
       .catch(() => {
         openToast({ severity: 'error', message: '댓글 작성에 실패했습니다.' })

@@ -14,7 +14,7 @@ export const mockTeamList: ITeamListInfo[] = [
     dueTo: '2025-10-10',
     status: 'ONGOING' as TeamStatus,
     type: 'STUDY' as TeamType,
-    role: ['M'],
+    role: ['Member'],
     region: '부산',
     operationFormat: 'MIX' as TeamOperationForm,
     isApproved: true,

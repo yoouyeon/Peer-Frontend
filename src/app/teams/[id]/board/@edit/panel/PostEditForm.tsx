@@ -6,6 +6,7 @@ import useTeamPageState from '@/states/useTeamPageState'
 import useToast from '@/states/useToast'
 import { EditForm } from '@/components/board/EditPanel'
 import { IBoardEditFormType } from '@/types/TeamBoardTypes'
+import API_PATH from '@/constant/apiPath'
 
 const PostEditForm = ({
   postId,
@@ -27,7 +28,7 @@ const PostEditForm = ({
     if (postId) {
       setIsLoading(true)
       axiosWithAuth
-        .get(`/api/v1/team-page/post/${postId}`)
+        .get(`${API_PATH.teamPage.post}/${postId}`)
         .then((res) => {
           if (!res?.data) throw new Error()
           setPreviousData({

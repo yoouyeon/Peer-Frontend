@@ -17,6 +17,7 @@ import CommentList from '@/components/board/CommentList'
 import { CommentForm } from '@/components/board/CommentForm'
 import CuTextModal from '@/components/CuTextModal'
 import useModal from '@/hook/useModal'
+import API_PATH from '@/constant/apiPath'
 
 const TeamNoticeView = ({ params }: { params: { id: string } }) => {
   const { id: teamId } = params
@@ -24,7 +25,7 @@ const TeamNoticeView = ({ params }: { params: { id: string } }) => {
   const { postId, setNotice } = useTeamPageState()
   const { isOpen, openModal, closeModal } = useModal()
   const { data, error, isLoading } = useSWR<ITeamNoticeDetail>(
-    `/api/v1/team-page/post/${postId}`,
+    `${API_PATH.teamPage.post}/${postId}`,
     (url: string) => axiosWithAuth.get(url).then((res) => res.data),
   )
   const { isPc } = useMedia()

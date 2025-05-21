@@ -8,6 +8,7 @@ import { handlers as showcaseHandlers } from './showcase'
 import { handlers as signupHandlers } from './signup'
 import { handlers as signinHandlers } from './signin'
 import { handlers as teamHandlers } from './team'
+import { handlers as teamPageHandlers } from './teamPage'
 
 export const handlers = [
   ...messageHandlers,
@@ -20,4 +21,5 @@ export const handlers = [
   ...signupHandlers,
   ...signinHandlers,
   ...teamHandlers,
+  ...teamPageHandlers,
 ]

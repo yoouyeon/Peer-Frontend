@@ -43,6 +43,9 @@ const API_PATH = {
   teamPage: {
     notice: `${BASE_URL}/api/v1/team-page/notice`,
     post: `${BASE_URL}/api/v1/team-page/post`,
+    simple: `${BASE_URL}/api/v1/team-page/simple`,
+    posts: `${BASE_URL}/api/v1/team-page/posts`,
+    postsCreate: `${BASE_URL}/api/v1/team-page/posts/create`,
   },
   // 민감 정보 암호화를 위한 API
   main: {

@@ -18,6 +18,7 @@ import BoardPostList from './panel/BoardPostList'
 import BoardDropdown from './panel/BoardDropdown'
 import Tutorial from '@/components/Tutorial'
 import TeamBoardTutorial from '@/components/tutorialContent/TeamBoardTutorial'
+import API_PATH from '@/constant/apiPath'
 
 const TeamBoard = ({ params }: { params: { id: string } }) => {
   const { id: teamId } = params
@@ -31,7 +32,7 @@ const TeamBoard = ({ params }: { params: { id: string } }) => {
     const getBoardList = async () => {
       try {
         const res: AxiosResponse<ITeamBoard[]> = await axiosWithAuth.get(
-          `/api/v1/team-page/simple/${teamId}`,
+          `${API_PATH.teamPage.simple}/${teamId}`,
         )
         setBoardList(res.data)
         if (!res.data) throw new Error('팀 페이지가 존재하지 않습니다.')

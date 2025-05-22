@@ -8,10 +8,11 @@ import { validateAccessToken } from '@/mocks/utils'
 import { ErrorResponse } from '@/mocks/types'
 import { ITeamMemberInfo } from '@/app/teams/[id]/panel/TeamInfoContainer'
 import {
-  MOCK_NOTICE_ID,
+  getNextCommentId,
   MOCK_TEAM_ID,
-  mockNoticeComment,
+  mockCommentMap,
 } from '@/mocks/data/teamPage'
+import { ITeamComment } from '@/types/TeamBoardTypes'
 
 type TeamMainParam = {
   teamId: string
@@ -137,13 +138,14 @@ export const handlers = [
     }
 
     const numberPostId = Number(postId)
-    // 공지사항 댓글 반환
-    if (numberPostId === MOCK_NOTICE_ID) {
-      // 공지사항 댓글을 배열로 변환
-      const noticeComments = Array.from(mockNoticeComment.values()).sort(
+
+    // 댓글 반환 (공지사항 & 게시판)
+    const postComments = mockCommentMap.get(numberPostId)
+    if (postComments) {
+      const comments = Array.from(postComments.values()).sort(
         (a, b) => a.commentId - b.commentId,
       )
-      return HttpResponse.json(noticeComments, {
+      return HttpResponse.json(comments, {
         status: HTTP_STATUS.ok,
       })
     }
@@ -172,8 +174,9 @@ export const handlers = [
         )
       }
 
-      // 공지사항 댓글 등록
-      if (postId === MOCK_NOTICE_ID) {
+      // 댓글 등록 (공지사항 & 게시판)
+      const postComments = mockCommentMap.get(postId)
+      if (postComments) {
         if (!content) {
           return HttpResponse.json(
             {
@@ -182,8 +185,8 @@ export const handlers = [
             { status: HTTP_STATUS.badRequest },
           )
         }
-        const newCommentId = mockNoticeComment.size + 1
-        mockNoticeComment.set(newCommentId, {
+        const newCommentId = getNextCommentId()
+        postComments.set(newCommentId, {
           commentId: newCommentId,
           authorImage: '',
           authorNickname: '길동홍',
@@ -199,6 +202,11 @@ export const handlers = [
           { status: HTTP_STATUS.created },
         )
       }
+
+      return HttpResponse.json(
+        { message: '게시물을 찾을 수 없습니다.' },
+        { status: HTTP_STATUS.notFound },
+      )
     },
   ),
   http.put<PutCommentParam, PutCommentBody, never>(
@@ -220,20 +228,24 @@ export const handlers = [
 
       const { content } = await request.json()
       const numberCommentId = Number(commentId)
-      // 공지사항 댓글 수정
-      const targetComment = mockNoticeComment.get(numberCommentId)
-      if (targetComment) {
-        targetComment.content = content
-        mockNoticeComment.set(numberCommentId, targetComment)
-        return HttpResponse.json(
-          {
-            message: '댓글이 수정되었습니다.',
-          },
-          { status: HTTP_STATUS.ok },
-        )
-      }
 
-      // TODO : 게시물 댓글 수정
+      // 댓글 수정 (공지사항 & 게시판)
+      const commentAndPostId = findCommentById(numberCommentId)
+      if (commentAndPostId) {
+        const { comment, postId } = commentAndPostId
+        const postComments = mockCommentMap.get(postId)
+        if (postComments) {
+          comment.content = content
+          postComments.set(numberCommentId, comment)
+          mockCommentMap.set(postId, postComments)
+          return HttpResponse.json(
+            {
+              message: '댓글이 수정되었습니다.',
+            },
+            { status: HTTP_STATUS.ok },
+          )
+        }
+      }
 
       // 존재하지 않는 댓글 ID일 때
       return HttpResponse.json(
@@ -251,8 +263,8 @@ export const handlers = [
         return validationResult.response
       }
 
-      const { commentId } = params
       // commentId가 없거나 잘못된 값일 때
+      const { commentId } = params
       if (!commentId || isNaN(Number(commentId))) {
         return HttpResponse.json(
           { message: '잘못된 요청입니다.' },
@@ -260,18 +272,24 @@ export const handlers = [
         )
       }
 
+      // 댓글 삭제 (공지사항 & 게시판)
       const numberCommentId = Number(commentId)
-      if (mockNoticeComment.has(numberCommentId)) {
-        mockNoticeComment.delete(numberCommentId)
-        return HttpResponse.json(
-          {
-            message: '댓글이 삭제되었습니다.',
-          },
-          { status: HTTP_STATUS.ok },
-        )
+      const commentAndPostId = findCommentById(numberCommentId)
+      if (commentAndPostId) {
+        const { postId } = commentAndPostId
+        const postComments = mockCommentMap.get(postId)
+        if (postComments) {
+          postComments.delete(numberCommentId)
+          mockCommentMap.set(postId, postComments)
+          return HttpResponse.json(
+            {
+              message: '댓글이 삭제되었습니다.',
+            },
+            { status: HTTP_STATUS.ok },
+          )
+        }
       }
 
-      // TODO : 게시물 댓글 삭제
       // 존재하지 않는 댓글 ID일 때
       return HttpResponse.json(
         { message: '댓글을 찾을 수 없습니다.' },
@@ -280,3 +298,25 @@ export const handlers = [
     },
   ),
 ]
+
+export const findCommentById = (
+  commentId: number,
+):
+  | {
+      comment: ITeamComment
+      postId: number
+    }
+  | undefined => {
+  // 게시판 댓글 검색
+  const entries = Array.from(mockCommentMap.entries())
+  for (const [postId, postComments] of entries) {
+    const comment = postComments.get(commentId)
+    if (comment) {
+      return {
+        comment,
+        postId,
+      }
+    }
+  }
+  return undefined
+}

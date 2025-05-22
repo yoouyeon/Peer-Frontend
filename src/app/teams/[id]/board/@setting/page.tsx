@@ -13,6 +13,7 @@ import useTeamPageState from '@/states/useTeamPageState'
 import { ITeamBoard } from '@/types/TeamBoardTypes'
 import BoardItem from './panel/BoardItem'
 import * as style from './page.style'
+import API_PATH from '@/constant/apiPath'
 
 interface ITitleStackProps {
   title: string
@@ -48,7 +49,7 @@ const TeamBoardSetting = ({ params }: { params: { id: string } }) => {
   const { mutate } = useSWRConfig()
 
   const { data, isLoading, error } = useSWR<ITeamBoard[]>(
-    `/api/v1/team-page/simple/${teamId}`,
+    `${API_PATH.teamPage.simple}/${teamId}`,
     (url: string) => axiosWithAuth.get(url).then((res) => res.data),
   )
 
@@ -74,7 +75,7 @@ const TeamBoardSetting = ({ params }: { params: { id: string } }) => {
           severity: 'success',
           message: '게시판을 추가했습니다.',
         })
-        mutate(`/api/v1/team-page/simple/${teamId}`)
+        mutate(`${API_PATH.teamPage.simple}/${teamId}`)
       })
       .catch((e: unknown) => {
         if (isAxiosError(e)) {

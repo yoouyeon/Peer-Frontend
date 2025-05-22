@@ -33,7 +33,7 @@ const TeamNoticeView = ({ params }: { params: { id: string } }) => {
 
   const handleDelete = () => {
     axiosWithAuth
-      .delete(`/api/v1/team/post/${postId}`)
+      .delete(`${API_PATH.team.modifyPost}/${postId}`)
       .then(() => {
         alert('공지사항을 삭제했습니다.')
         setNotice('LIST')

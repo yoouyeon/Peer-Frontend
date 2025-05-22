@@ -64,7 +64,7 @@ const NoticeEditForm = ({
     if (postId) {
       // 글 수정
       axiosWithAuth
-        .put(`/api/v1/team/post/${postId}`, form)
+        .put(`${API_PATH.team.modifyPost}/${postId}`, form)
         .then(() => {
           alert('공지사항을 수정했습니다.')
           setNotice('DETAIL', postId)

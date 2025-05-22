@@ -11,6 +11,7 @@ import {
   getNextCommentId,
   MOCK_TEAM_ID,
   mockCommentMap,
+  mockPostMap,
 } from '@/mocks/data/teamPage'
 import { ITeamComment } from '@/types/TeamBoardTypes'
 
@@ -34,6 +35,20 @@ type PutCommentBody = {
 
 type DeleteCommentParam = {
   commentId: string
+}
+
+type PutPostParam = {
+  postId: string
+}
+
+type PutPostBody = {
+  title: string
+  content: string
+  image: null
+}
+
+type DeletePostParam = {
+  postId: string
 }
 
 export const handlers = [
@@ -293,6 +308,86 @@ export const handlers = [
       // 존재하지 않는 댓글 ID일 때
       return HttpResponse.json(
         { message: '댓글을 찾을 수 없습니다.' },
+        { status: HTTP_STATUS.notFound },
+      )
+    },
+  ),
+
+  http.put<PutPostParam, PutPostBody, null | ErrorResponse>(
+    `${API_PATH.team.modifyPost}/:postId`,
+    async ({ params, request }) => {
+      const validationResult = validateAccessToken(request)
+      if (!validationResult.isValid) {
+        return validationResult.response
+      }
+
+      const { postId } = params
+      // postId가 없거나 잘못된 값일 때
+      if (!postId || isNaN(Number(postId))) {
+        return HttpResponse.json(
+          { message: '잘못된 요청입니다.' },
+          { status: HTTP_STATUS.badRequest },
+        )
+      }
+
+      const numberPostId = Number(postId)
+      const { title, content } = await request.json()
+      // 게시글 수정
+      const post = mockPostMap.get(numberPostId)
+      if (post) {
+        if (!title || !content) {
+          return HttpResponse.json(
+            {
+              message: '제목과 내용을 입력해주세요.',
+            },
+            { status: HTTP_STATUS.badRequest },
+          )
+        }
+        post.title = title
+        post.content = content
+        mockPostMap.set(numberPostId, post)
+        return HttpResponse.json(
+          { message: '게시글이 수정되었습니다.' },
+          { status: HTTP_STATUS.ok },
+        )
+      }
+      // 존재하지 않는 게시글 ID일 때
+      return HttpResponse.json(
+        { message: '게시글을 찾을 수 없습니다.' },
+        { status: HTTP_STATUS.notFound },
+      )
+    },
+  ),
+
+  http.delete<DeletePostParam, never, null | ErrorResponse>(
+    `${API_PATH.team.modifyPost}/:postId`,
+    ({ params, request }) => {
+      const validationResult = validateAccessToken(request)
+      if (!validationResult.isValid) {
+        return validationResult.response
+      }
+
+      const { postId } = params
+      // postId가 없거나 잘못된 값일 때
+      if (!postId || isNaN(Number(postId))) {
+        return HttpResponse.json(
+          { message: '잘못된 요청입니다.' },
+          { status: HTTP_STATUS.badRequest },
+        )
+      }
+      const numberPostId = Number(postId)
+      // 게시글 삭제
+      const post = mockPostMap.get(numberPostId)
+      if (post) {
+        mockPostMap.delete(numberPostId)
+        return HttpResponse.json(
+          { message: '게시글이 삭제되었습니다.' },
+          { status: HTTP_STATUS.ok },
+        )
+      }
+      // 존재하지 않는 게시글 ID일 때
+      return HttpResponse.json(
+        { message: '게시글을 찾을 수 없습니다.' },
         { status: HTTP_STATUS.notFound },
       )
     },

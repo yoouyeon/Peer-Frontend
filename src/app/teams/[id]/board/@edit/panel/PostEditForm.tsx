@@ -63,7 +63,7 @@ const PostEditForm = ({
     if (postId) {
       // 글 수정
       axiosWithAuth
-        .put(`/api/v1/team/post/${postId}`, form)
+        .put(`${API_PATH.team.modifyPost}/${postId}`, form)
         .then(() => {
           alert('게시글을 수정했습니다.')
           setBoard('DETAIL', boardId, postId)
@@ -77,7 +77,7 @@ const PostEditForm = ({
     } else {
       // 글 작성
       axiosWithAuth
-        .post(`/api/v1/team-page/posts/create`, {
+        .post(API_PATH.teamPage.postsCreate, {
           ...form,
           boardId,
           image: null,

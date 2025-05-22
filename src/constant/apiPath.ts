@@ -39,6 +39,7 @@ const API_PATH = {
     main: `${BASE_URL}/api/v1/team/main`,
     member: `${BASE_URL}/api/v1/team/main/member`,
     comment: `${BASE_URL}/api/v1/team/post/comment`,
+    modifyPost: `${BASE_URL}/api/v1/team/post`,
   },
   teamPage: {
     notice: `${BASE_URL}/api/v1/team-page/notice`,

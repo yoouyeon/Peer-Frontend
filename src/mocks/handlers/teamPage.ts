@@ -1,9 +1,11 @@
 import { http, HttpResponse } from 'msw'
 import API_PATH from '@/constant/apiPath'
 import {
+  getNextPostId,
   MOCK_BOARD_ID,
   MOCK_TEAM_ID,
   mockBoardList,
+  mockCommentMap,
   mockPostMap,
 } from '@/mocks/data/teamPage'
 import { validateAccessToken } from '@/mocks/utils'
@@ -11,6 +13,19 @@ import { mockTeamInfo } from '../data/team'
 import HTTP_STATUS from '@/constant/httpStatus'
 import { IPagination } from '@/types/IPagination'
 import { ITeamNotice, ITeamPost } from '@/types/TeamBoardTypes'
+import { ErrorResponse } from '../types'
+
+type PostNewPostBody = {
+  title: string
+  content: string
+  image: null
+  boardId: number
+}
+
+type PostNewPostResponse = {
+  boardId: number
+  postId: number
+}
 
 export const handlers = [
   http.get(`${API_PATH.teamPage.simple}/:teamId`, ({ params, request }) => {
@@ -222,4 +237,52 @@ export const handlers = [
       { status: HTTP_STATUS.ok },
     )
   }),
+
+  http.post<never, PostNewPostBody, PostNewPostResponse | ErrorResponse>(
+    API_PATH.teamPage.postsCreate,
+    async ({ request }) => {
+      const validationResult = validateAccessToken(request)
+      if (!validationResult.isValid) {
+        return validationResult.response
+      }
+
+      const { title, content, boardId } = await request.json()
+
+      if (!title || !content) {
+        return HttpResponse.json(
+          { message: '제목과 내용을 입력해주세요.' },
+          { status: HTTP_STATUS.badRequest },
+        )
+      }
+
+      if (boardId !== MOCK_BOARD_ID) {
+        return HttpResponse.json(
+          { message: '게시판을 찾을 수 없습니다.' },
+          { status: HTTP_STATUS.notFound },
+        )
+      }
+
+      // 게시글 등록
+      const newPostId = getNextPostId()
+      const newPost = {
+        type: 'post' as const,
+        postId: newPostId,
+        title,
+        nickname: '김개발',
+        hit: 0,
+        date: new Date(),
+        content,
+        isAuthor: true,
+      }
+      mockPostMap.set(newPostId, newPost)
+      mockCommentMap.set(newPostId, new Map())
+      return HttpResponse.json(
+        {
+          boardId: MOCK_BOARD_ID,
+          postId: newPostId,
+        },
+        { status: HTTP_STATUS.created },
+      )
+    },
+  ),
 ]

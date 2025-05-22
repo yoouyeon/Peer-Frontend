@@ -34,7 +34,7 @@ const TeamBoardPostView = ({ params }: { params: { id: string } }) => {
   const handleDelete = () => {
     if (!boardId) return
     axiosWithAuth
-      .delete(`/api/v1/team/post/${postId}`)
+      .delete(`${API_PATH.team.modifyPost}/${postId}`)
       .then(() => {
         alert('게시글을 삭제했습니다.')
         setBoard('LIST', boardId)

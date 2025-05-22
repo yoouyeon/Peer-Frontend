@@ -45,6 +45,9 @@ const nextConfig = withPWA({
 
     return config
   },
+  experimental: {
+    instrumentationHook: true,
+  },
 })
 
 const runtimeCaching = {

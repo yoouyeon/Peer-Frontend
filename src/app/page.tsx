@@ -4,6 +4,7 @@ import MainMobileView from '@/app/panel/main-page/MainMobileView'
 import Footer from '@/app/panel/main-page/Footer'
 import MainPcView from '@/app/panel/main-page/MainPcView'
 import PwaInstallBanner from '@/app/panel/PwaInstallBanner'
+import API_PATH from '@/constant/apiPath'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,7 +22,7 @@ export default async function Home({ searchParams }: { searchParams: any }) {
   let data
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_SSR_API}/api/v1/recruit?type=${
+      `${API_PATH.recruit.get}?type=${
         searchParams?.type ?? 'STUDY'
       }&sort=latest&page=1&pageSize=6&keyword=&due=1주일&due=12개월 이상&region1=&region2=&place=&status=&tag=`,
       {

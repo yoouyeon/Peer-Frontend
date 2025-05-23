@@ -7,6 +7,7 @@ import {
   mockBoardList,
   mockCommentMap,
   mockPostMap,
+  POST_TYPE,
 } from '@/mocks/data/teamPage'
 import { validateAccessToken } from '@/mocks/utils'
 import { mockTeamInfo } from '../data/team'
@@ -85,7 +86,7 @@ export const handlers = [
 
     // 필터링
     const noticeList = Array.from(mockPostMap.values()).filter(
-      (post) => post.type === 'notice',
+      (post) => post.type === POST_TYPE.NOTICE,
     )
     const filteredNoticeList = noticeList.filter((notice) => {
       if (keyword === '') return true
@@ -189,7 +190,7 @@ export const handlers = [
 
     // 게시판은 1개 뿐
     const postList = Array.from(mockPostMap.values()).filter(
-      (post) => post.type === 'post',
+      (post) => post.type === POST_TYPE.POST,
     )
     // 필터링
     const filteredPostsList = Array.from(postList.values()).filter((post) => {
@@ -265,7 +266,7 @@ export const handlers = [
       // 게시글 등록
       const newPostId = getNextPostId()
       const newPost = {
-        type: 'post' as const,
+        type: POST_TYPE.POST,
         postId: newPostId,
         title,
         nickname: '김개발',

@@ -4,6 +4,11 @@ import {
   ITeamPostDetail,
 } from '@/types/TeamBoardTypes'
 
+export const POST_TYPE = {
+  POST: 'post',
+  NOTICE: 'notice',
+} as const
+
 export const MOCK_TEAM_ID = 1
 export const MOCK_NOTICE_ID = 1
 export const MOCK_POST_ID = 2
@@ -23,13 +28,13 @@ export const mockPostMap: Map<
   number,
   (ITeamPostDetail | ITeamNoticeDetail) & {
     postId: number
-    type: 'post' | 'notice'
+    type: (typeof POST_TYPE)[keyof typeof POST_TYPE]
   }
 > = new Map([
   [
     MOCK_NOTICE_ID,
     {
-      type: 'notice',
+      type: POST_TYPE.NOTICE,
       postId: MOCK_NOTICE_ID,
       title: '스터디 안내',
       nickname: '김개발',
@@ -42,7 +47,7 @@ export const mockPostMap: Map<
   [
     MOCK_POST_ID,
     {
-      type: 'post',
+      type: POST_TYPE.POST,
       postId: MOCK_POST_ID,
       title: '스터디 일정',
       nickname: '김개발',

@@ -13,6 +13,7 @@ import MessageContainer from './panel/MessageContainer'
 import NewMessageModal from './panel/NewMessageModal'
 import BackgroundBox from '@/components/BackgroundBox'
 import PlusIcon from '@/icons/PlusIcon'
+import API_PATH from '@/constant/apiPath'
 import * as style from './page.style'
 
 const NewMessageButton = ({ openModal }: { openModal: () => void }) => {
@@ -34,7 +35,7 @@ const MessageListPage = () => {
   const { isOpen, openModal, closeModal } = useModal()
   const axiosWithAuth = useAxiosWithAuth()
   const { data, error, isLoading } = useSWR<IMessageListData[]>(
-    '/api/v1/message/list',
+    API_PATH.message.list,
     (url: string) => axiosWithAuth.get(url).then((res) => res.data),
   )
   const { setMessageList, resetMessageList } = useMessageListState()

@@ -4,6 +4,7 @@ import useAxiosWithAuth from '@/api/config'
 import Favorite from '@mui/icons-material/Favorite'
 import { motion, useAnimationControls } from 'framer-motion'
 import useToast from '@/states/useToast'
+import API_PATH from '@/constant/apiPath'
 
 const Interest = ({ id }: { id?: number }) => {
   const [favorite, setFavorite] = useState(false)
@@ -23,9 +24,7 @@ const Interest = ({ id }: { id?: number }) => {
   const changeFavorite = async () => {
     if (!id) return
     try {
-      await axiosInstance.post(
-        `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/recruit/favorite/${id}`,
-      )
+      await axiosInstance.post(`${API_PATH.recruit.favorite}/${id}`)
       setFavorite((prev) => {
         if (!prev) control.start(variants.favorite)
         else control.start(variants.unfavorite)

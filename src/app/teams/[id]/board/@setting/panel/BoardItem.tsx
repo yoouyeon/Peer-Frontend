@@ -7,6 +7,7 @@ import { TrashLineIcon } from '@/icons'
 import useModal from '@/hook/useModal'
 import useToast from '@/states/useToast'
 import CuTextModal from '@/components/CuTextModal'
+import API_PATH from '@/constant/apiPath'
 
 const BoardItem = ({
   board,
@@ -28,7 +29,7 @@ const BoardItem = ({
           severity: 'success',
           message: '게시판을 삭제했습니다.',
         })
-        mutate(`/api/v1/team-page/simple/${teamId}`)
+        mutate(`${API_PATH.teamPage.simple}/${teamId}`)
       })
       .catch((e: unknown) => {
         if (isAxiosError(e)) {

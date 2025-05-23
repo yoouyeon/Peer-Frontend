@@ -13,6 +13,7 @@ import useToast from '@/states/useToast'
 import CuCircularProgress from '@/components/CuCircularProgress'
 import { getUniqueArray } from '@/utils/getUniqueArray'
 import { ISkill } from '@/types/IUserProfile'
+import API_PATH from '@/constant/apiPath'
 
 export interface IMyPortfolio {
   teamId: number // 팀 Id
@@ -42,7 +43,7 @@ const MyPortfolio = ({
   const axiosWithAuth = useAxiosWithAuth()
 
   const { data, isLoading } = useSWR<Array<IMyPortfolio>>(
-    `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/myPortfolio/list?page=${page}`,
+    `${API_PATH.myPortfolio.list}?page=${page}`,
     (url: string) => axiosWithAuth.get(url).then((res) => res.data),
   )
 

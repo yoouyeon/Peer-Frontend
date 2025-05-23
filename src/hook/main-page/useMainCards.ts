@@ -5,6 +5,7 @@ import { defaultGetFetcher } from '@/api/fetchers'
 import useMainOptions from '@/hook/main-page/useMainOptions'
 import useAuthStore from '@/states/useAuthStore'
 import useAxiosWithAuth from '@/api/config'
+import API_PATH from '@/constant/apiPath'
 
 const useMainCards = (initData: IPagination<IPost[]>) => {
   const { optionsQuery } = useMainOptions()
@@ -12,7 +13,7 @@ const useMainCards = (initData: IPagination<IPost[]>) => {
   const axiosInstance = useAxiosWithAuth()
 
   const { data, isLoading, error } = useSWR<IPagination<IPost[]>>(
-    `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/recruit` + optionsQuery,
+    API_PATH.recruit.get + optionsQuery,
     isLogin
       ? (url: string) =>
           axiosInstance.get(url).then((res) => {

@@ -12,6 +12,7 @@ import {
 } from '@/app/teams/types/types'
 import NoDataDolphin from '@/components/NoDataDolphin'
 import CuCircularProgress from '@/components/CuCircularProgress'
+import API_PATH from '@/constant/apiPath'
 
 export interface ITeamInfo {
   id: string
@@ -24,12 +25,12 @@ export interface ITeamInfo {
   isApproved: boolean
   role: string[]
 }
-
+// TeamStatus
 const TeamsListPage = () => {
   const { showTeams } = useShowTeams()
   const axiosInstance = useAxiosWithAuth()
   const { data, isLoading } = useSWR<ITeamInfo[]>(
-    `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/team/list?teamStatus=${showTeams}`,
+    `${API_PATH.team.list}?teamStatus=${showTeams}`,
     (url: string) => axiosInstance(url).then((res) => res.data),
   )
 

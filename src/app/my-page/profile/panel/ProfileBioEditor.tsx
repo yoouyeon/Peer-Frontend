@@ -166,7 +166,7 @@ const ProfileBioEditor = ({
 
   const nickname = watch('nickname')
 
-  const isValidNickname = (value: string) => {
+  const validNicknameRegex = (value: string) => {
     if (value.includes('\n\t\f\v')) return '공백 문자는 띄어쓰기만 허용됩니다.'
     else return true
   }
@@ -440,7 +440,7 @@ const ProfileBioEditor = ({
                   message: '닉네임은 최소 두 글자 이상 작성해야 합니다.',
                 },
                 validate: {
-                  isValidNickname,
+                  validNicknameRegex,
                   pattern: (value) =>
                     /^([가-힣a-zA-Z0-9]+)$/.test(value) ||
                     value === '' ||

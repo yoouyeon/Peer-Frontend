@@ -17,13 +17,14 @@ import CuTextModal from '@/components/CuTextModal'
 import useModal from '@/hook/useModal'
 import { CommentForm } from '@/components/board/CommentForm'
 import CommentList from '@/components/board/CommentList'
+import API_PATH from '@/constant/apiPath'
 
 const TeamBoardPostView = ({ params }: { params: { id: string } }) => {
   const { id: teamId } = params
   const axiosWithAuth = useAxiosWithAuth()
   const { boardId, postId, setBoard } = useTeamPageState()
   const { data, error, isLoading } = useSWR<ITeamPostDetail>(
-    `/api/v1/team-page/post/${postId}`,
+    `${API_PATH.teamPage.post}/${postId}`,
     (url: string) => axiosWithAuth.get(url).then((res) => res.data),
   )
   const { isPc } = useMedia()
@@ -33,7 +34,7 @@ const TeamBoardPostView = ({ params }: { params: { id: string } }) => {
   const handleDelete = () => {
     if (!boardId) return
     axiosWithAuth
-      .delete(`/api/v1/team/post/${postId}`)
+      .delete(`${API_PATH.team.modifyPost}/${postId}`)
       .then(() => {
         alert('게시글을 삭제했습니다.')
         setBoard('LIST', boardId)

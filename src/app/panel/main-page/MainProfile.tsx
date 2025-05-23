@@ -1,4 +1,5 @@
 import useAxiosWithAuth from '@/api/config'
+import API_PATH from '@/constant/apiPath'
 import useAuthStore from '@/states/useAuthStore'
 import { IUserProfile } from '@/types/IUserProfile'
 import { Avatar, Link, Stack, Typography } from '@mui/material'
@@ -9,7 +10,7 @@ const MainProfile = () => {
   const axiosWithAuth = useAxiosWithAuth()
   const { isLogin } = useAuthStore()
   const { data } = useSWR<IUserProfile>(
-    isLogin ? `${process.env.NEXT_PUBLIC_CSR_API}/api/v1/profile` : undefined,
+    isLogin ? API_PATH.profile.get : undefined,
     (url: string) => axiosWithAuth.get(url).then((res) => res.data),
   )
   const [isClient, setIsClient] = useState(false)

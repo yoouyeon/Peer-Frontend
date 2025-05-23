@@ -9,6 +9,7 @@ import {
 import { useInfiniteSWRScroll } from '@/hook/useInfiniteScroll'
 import useTeamPageState from '@/states/useTeamPageState'
 import { ITeamPost } from '@/types/TeamBoardTypes'
+import API_PATH from '@/constant/apiPath'
 
 const BoardPostList = ({
   boardId,
@@ -21,7 +22,7 @@ const BoardPostList = ({
   const { setBoard } = useTeamPageState()
   const { data, error, isLoading, size, setSize, targetRef } =
     useInfiniteSWRScroll(
-      `/api/v1/team-page/posts/${boardId}?&size=${10}&keyword=${keyword}`,
+      `${API_PATH.teamPage.posts}/${boardId}?&size=${10}&keyword=${keyword}`,
       (url: string) => axiosWithAuth.get(url).then((res) => res.data),
     )
 

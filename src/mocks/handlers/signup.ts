@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import API_PATH from '@/constant/apiPath'
 import HTTP_STATUS from '@/constant/httpStatus'
-import { isEmail, isValidNickname } from '@/utils/regex'
+import { emailRegex, validNicknameRegex } from '@/utils/regex'
 import { ErrorResponse } from '../types'
 import {
   EXISTING_EMAIL,
@@ -42,7 +42,7 @@ export const handlers = [
       }
 
       // 이메일 형식이 올바르지 않은 경우
-      if (!isEmail.test(email)) {
+      if (!emailRegex.test(email)) {
         return HttpResponse.json(
           { message: '이메일 형식을 다시 확인해주세요.' },
           { status: HTTP_STATUS.badRequest },
@@ -78,7 +78,7 @@ export const handlers = [
       const { email, code } = await request.json()
 
       // 이메일이 올바르지 않은 경우
-      if (!email || email.trim() === '' || !isEmail.test(email)) {
+      if (!email || email.trim() === '' || !emailRegex.test(email)) {
         return HttpResponse.json(
           { message: '잘못된 이메일입니다!' },
           { status: HTTP_STATUS.badRequest },
@@ -105,7 +105,7 @@ export const handlers = [
       const { nickname } = await request.json()
 
       // 닉네임 형식이 올바르지 않은 경우
-      if (!isValidNickname.test(nickname)) {
+      if (!validNicknameRegex.test(nickname)) {
         return HttpResponse.json(
           { message: '유효하지 않은 닉네임입니다.' },
           { status: HTTP_STATUS.badRequest },

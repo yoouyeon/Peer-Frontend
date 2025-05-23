@@ -19,7 +19,7 @@ import * as style from './signup.style'
 import EncryptedSender from '@/components/EncryptedSender'
 import { EApiType } from '@/types/EApiType'
 import API_PATH from '@/constant/apiPath'
-import { isEmail, isValidNicknameCharacter } from '@/utils/regex'
+import { emailRegex, validNicknameCharacterRegex } from '@/utils/regex'
 
 const SignUp = () => {
   const router = useRouter()
@@ -308,7 +308,7 @@ const SignUp = () => {
                   rules={{
                     required: '이메일을 입력하세요',
                     pattern: {
-                      value: isEmail,
+                      value: emailRegex,
                       message: '유효한 이메일 형식이 아닙니다',
                     },
                   }}
@@ -407,7 +407,7 @@ const SignUp = () => {
                       message: '닉네임은 30자 이하여야 합니다',
                     },
                     pattern: {
-                      value: isValidNicknameCharacter,
+                      value: validNicknameCharacterRegex,
                       message: '한글, 영문, 숫자만 사용할 수 있습니다',
                     },
                   }}

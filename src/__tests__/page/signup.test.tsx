@@ -1,7 +1,7 @@
 import SignUp from '@/app/signup/page'
 import { render, waitFor, screen, act, fireEvent } from '@testing-library/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import useAuthStore from '@/states/useAuthStore'
 import useToast from '@/states/useToast'
 import { ThemeProvider } from '@mui/material'
@@ -13,6 +13,15 @@ jest.mock('next/navigation', () => ({
 }))
 jest.mock('@/states/useAuthStore')
 jest.mock('@/states/useToast')
+
+jest.mock('@/components/EncryptedSender', () => {
+  return function MockEncryptedSender({ children, onSuccess }: any) {
+    useEffect(() => {
+      onSuccess()
+    }, [])
+    return children
+  }
+})
 
 const FIELD_LABELS = {
   EMAIL: '새로운 이메일',
@@ -26,6 +35,8 @@ const BUTTON_LABELS = {
   SEND_CODE: '코드 전송',
   VERIFY_CODE: '인증하기',
   NEXT: '다음',
+  VERIFY_NICKNAME: '중복 확인',
+  SIGN_UP: '가입 완료',
 } as const
 
 describe('회원가입 페이지', () => {
@@ -37,6 +48,7 @@ describe('회원가입 페이지', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     ;(useRouter as jest.Mock).mockReturnValue({
+      push: jest.fn(),
       replace: jest.fn(),
     })
     ;(useAuthStore as any).getState = mockGetLoginState
@@ -91,6 +103,13 @@ describe('회원가입 페이지', () => {
   const getSecondStepFields = () => ({
     name: screen.getByLabelText(FIELD_LABELS.NAME),
     nickname: screen.getByLabelText(FIELD_LABELS.NICKNAME),
+  })
+
+  const getSecondStepButtons = () => ({
+    verifyNickname: screen.getByRole('button', {
+      name: BUTTON_LABELS.VERIFY_NICKNAME,
+    }),
+    signUp: screen.getByRole('button', { name: BUTTON_LABELS.SIGN_UP }),
   })
 
   describe('렌더링', () => {
@@ -378,5 +397,196 @@ describe('회원가입 페이지', () => {
       })
     })
   })
-  // describe('2단계: ', () => {})
+  describe('2단계: 이름/닉네임', () => {
+    beforeEach(async () => {
+      // 1단계를 모두 완료한 상태로 설정
+      await renderSignUpPage()
+
+      const { email, authCode, password } = getFirstStepFields()
+      const { sendCode, verifyCode, next } = getFirstStepButtons()
+
+      await act(async () => {
+        fireEvent.change(email, { target: { value: 'test@example.com' } })
+        fireEvent.click(sendCode)
+      })
+      await act(async () => {
+        fireEvent.change(authCode, { target: { value: '123456' } })
+        fireEvent.click(verifyCode)
+      })
+      await act(async () => {
+        fireEvent.change(password, { target: { value: 'ValidPassword1!' } })
+        fireEvent.click(next)
+      })
+    })
+
+    describe('이름 입력', () => {
+      test('이름은 한글 2~4자로 입력해야 한다.', async () => {
+        const { name } = getSecondStepFields()
+
+        // 유효한 이름 입력
+        await act(async () => {
+          fireEvent.change(name, { target: { value: '홍길동' } })
+        })
+
+        const errorMessage = screen.queryByText('한글 2 ~ 4자로 입력하세요')
+        expect(errorMessage).not.toBeInTheDocument()
+      })
+      test('이름이 유효하지 않은 경우 에러 메시지가 표시된다.', async () => {
+        const { name } = getSecondStepFields()
+
+        // 유효하지 않은 이름 입력
+        await act(async () => {
+          fireEvent.change(name, { target: { value: '홍' } })
+        })
+
+        const errorMessage = screen.getByText('한글 2 ~ 4자로 입력하세요')
+        expect(errorMessage).toBeInTheDocument()
+      })
+    })
+    describe('닉네임 입력', () => {
+      test('닉네임은 한글, 영문, 숫자 2~30자로 입력해야 한다.', async () => {
+        const { nickname } = getSecondStepFields()
+
+        // 유효한 닉네임 입력
+        await act(async () => {
+          fireEvent.change(nickname, { target: { value: '홍길동123' } })
+        })
+
+        const errorMessage =
+          screen.queryByText('닉네임은 2자 이상이어야 합니다')
+        expect(errorMessage).not.toBeInTheDocument()
+      })
+      test('닉네임이 유효하지 않은 경우 에러 메시지가 표시된다.', async () => {
+        const { nickname } = getSecondStepFields()
+
+        // CASE 1: 너무 짧은 닉네임
+        await act(async () => {
+          fireEvent.change(nickname, { target: { value: '홍' } })
+        })
+        let errorMessage = screen.getByText('닉네임은 2자 이상이어야 합니다')
+        expect(errorMessage).toBeInTheDocument()
+
+        // CASE 2: 너무 긴 닉네임
+        await act(async () => {
+          fireEvent.change(nickname, { target: { value: 'a'.repeat(31) } })
+        })
+        errorMessage = screen.getByText('닉네임은 30자 이하여야 합니다')
+        expect(errorMessage).toBeInTheDocument()
+
+        // CASE 3: 특수문자가 포함된 닉네임
+        await act(async () => {
+          fireEvent.change(nickname, { target: { value: '홍길동@123' } })
+        })
+        errorMessage = screen.getByText('한글, 영문, 숫자만 사용할 수 있습니다')
+        expect(errorMessage).toBeInTheDocument()
+
+        // CASE 4: 닉네임을 지운 경우
+        await act(async () => {
+          fireEvent.change(nickname, { target: { value: '' } })
+        })
+        errorMessage = screen.getByText('닉네임을 입력하세요')
+        expect(errorMessage).toBeInTheDocument()
+      })
+    })
+    describe('닉네임 중복 확인', () => {
+      test('유효하지 않은 닉네임은 에러 토스트 메시지가 표시된다.', async () => {
+        const { nickname } = getSecondStepFields()
+        const { verifyNickname } = getSecondStepButtons()
+
+        // 유효하지 않은 닉네임 입력
+        await act(async () => {
+          fireEvent.change(nickname, { target: { value: '홍' } })
+          fireEvent.click(verifyNickname)
+        })
+
+        expect(mockOpenToast).toHaveBeenCalledWith({
+          message: expect.stringContaining('유효하지 않은 닉네임입니다'),
+          severity: 'error',
+        })
+      })
+      test('중복인 닉네임의 경우 에러 토스트 메시지가 표시된다.', async () => {
+        const { nickname } = getSecondStepFields()
+        const { verifyNickname } = getSecondStepButtons()
+
+        // 중복된 닉네임 입력
+        await act(async () => {
+          fireEvent.change(nickname, { target: { value: '존재하는닉네임' } })
+          fireEvent.click(verifyNickname)
+        })
+
+        expect(mockOpenToast).toHaveBeenCalledWith({
+          message: expect.stringContaining('이미 가입된 닉네임입니다'),
+          severity: 'error',
+        })
+      })
+      test('중복이 아닌 닉네임의 경우 성공 토스트 메시지가 표시된다.', async () => {
+        const { nickname } = getSecondStepFields()
+        const { verifyNickname } = getSecondStepButtons()
+
+        // 중복되지 않은 닉네임 입력
+        await act(async () => {
+          fireEvent.change(nickname, { target: { value: '새로운닉네임' } })
+          fireEvent.click(verifyNickname)
+        })
+
+        expect(mockOpenToast).toHaveBeenCalledWith({
+          message: expect.stringContaining('닉네임이 확인되었습니다'),
+          severity: 'info',
+        })
+      })
+    })
+    describe('회원가입 완료', () => {
+      test('모든 입력이 유효한 경우 회원가입이 완료된다.', async () => {
+        const { name, nickname } = getSecondStepFields()
+        const { verifyNickname, signUp } = getSecondStepButtons()
+
+        // 이름 입력
+        await act(async () => {
+          fireEvent.change(name, { target: { value: '홍길동' } })
+        })
+        // 닉네임 입력과 중복확인
+        await act(async () => {
+          fireEvent.change(nickname, { target: { value: '새로운닉네임' } })
+          fireEvent.click(verifyNickname)
+        })
+
+        // 회원가입 완료 버튼 클릭
+        await act(async () => {
+          fireEvent.click(signUp)
+        })
+
+        // 성공한 경우 로그인 페이지로 이동
+        expect(useRouter().push).toHaveBeenCalledWith('/login')
+      })
+      test('유효하지 않은 입력이 있는 경우 해당 필드로 포커스가 이동한다.', async () => {
+        const { name, nickname } = getSecondStepFields()
+        const { verifyNickname, signUp } = getSecondStepButtons()
+
+        // CASE 1: 아무것도 입력하지 않은 경우
+        await act(async () => {
+          fireEvent.click(signUp)
+        })
+        expect(name).toHaveFocus()
+        expect(screen.getByText('이름을 입력하세요')).toBeInTheDocument()
+
+        // CASE 2: 이름만 입력한 경우
+        await act(async () => {
+          fireEvent.change(name, { target: { value: '홍길동' } })
+          fireEvent.click(signUp)
+        })
+        expect(nickname).toHaveFocus()
+        expect(screen.getByText('닉네임을 입력하세요')).toBeInTheDocument()
+
+        // CASE 3: 유효하지 않은 입력이 있는 경우
+        await act(async () => {
+          fireEvent.change(nickname, { target: { value: '홍' } })
+          fireEvent.click(signUp)
+        })
+        expect(nickname).toHaveFocus()
+        expect(
+          screen.getByText('닉네임은 2자 이상이어야 합니다'),
+        ).toBeInTheDocument()
+      })
+    })
+  })
 })

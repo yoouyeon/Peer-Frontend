@@ -10,8 +10,7 @@ beforeAll(() => {
 })
 
 afterEach(() => {
-  // 각 테스트 후 핸들러 초기화
-  server.resetHandlers()
+  server.restoreHandlers()
 })
 
 afterAll(() => {

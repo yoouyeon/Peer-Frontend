@@ -1,11 +1,15 @@
 import SignUp from '@/app/signup/page'
 import { render, waitFor, screen, act, fireEvent } from '@testing-library/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useEffect } from 'react'
 import useAuthStore from '@/states/useAuthStore'
 import useToast from '@/states/useToast'
 import { ThemeProvider } from '@mui/material'
 import { darkTheme } from '@/constant/ColorTheme'
+import { server } from '@/mocks/server'
+import { http, HttpResponse } from 'msw'
+import API_PATH from '@/constant/apiPath'
+import { MOCK_VERIFY_CODE, MOCK_VERIFY_SEED } from '@/mocks/constants'
+import HTTP_STATUS from '@/constant/httpStatus'
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
@@ -13,15 +17,9 @@ jest.mock('next/navigation', () => ({
 }))
 jest.mock('@/states/useAuthStore')
 jest.mock('@/states/useToast')
-
-jest.mock('@/components/EncryptedSender', () => {
-  return function MockEncryptedSender({ children, onSuccess }: any) {
-    useEffect(() => {
-      onSuccess()
-    }, [])
-    return children
-  }
-})
+jest.mock('@/api/jwtToken', () => ({
+  getToken: jest.fn(() => 'mock-token'),
+}))
 
 const FIELD_LABELS = {
   EMAIL: '새로운 이메일',
@@ -74,18 +72,12 @@ describe('회원가입 페이지', () => {
     })
   })
 
-  const renderSignUpPage = async () => {
-    const result = render(
+  const renderSignUpPage = () => {
+    return render(
       <ThemeProvider theme={darkTheme}>
-        <Suspense>
-          <SignUp />
-        </Suspense>
+        <SignUp />
       </ThemeProvider>,
     )
-    await waitFor(() => {
-      expect(result.container).toBeInTheDocument()
-    })
-    return result
   }
 
   const getFirstStepFields = () => ({
@@ -113,20 +105,20 @@ describe('회원가입 페이지', () => {
   })
 
   describe('렌더링', () => {
-    test('페이지가 정상적으로 랜더링된다.', async () => {
-      await renderSignUpPage()
+    test('페이지가 정상적으로 랜더링된다.', () => {
+      renderSignUpPage()
     })
-    test('로그인 상태일 때 메인 페이지로 리다이렉트된다.', async () => {
+    test('로그인 상태일 때 메인 페이지로 리다이렉트된다.', () => {
       mockGetLoginState.mockReturnValue({ isLogin: true })
 
-      await renderSignUpPage()
+      renderSignUpPage()
 
       expect(useRouter().replace).toHaveBeenCalledWith('/')
     })
-    test('약관 동의 없이 접근한 경우 리다이렉트된다', async () => {
+    test('약관 동의 없이 접근한 경우 리다이렉트된다', () => {
       mockGetSearchParams.mockReturnValue(null) // 약관 동의가 없는 경우
 
-      await renderSignUpPage()
+      renderSignUpPage()
 
       expect(useRouter().replace).toHaveBeenCalledWith('/')
     })
@@ -134,26 +126,25 @@ describe('회원가입 페이지', () => {
   describe('1단계: 이메일/인증코드/비밀번호', () => {
     describe('이메일', () => {
       test('유효한 이메일을 입력하면 인증코드가 전송된다.', async () => {
-        await renderSignUpPage()
+        renderSignUpPage()
         const { email } = getFirstStepFields()
         const { sendCode } = getFirstStepButtons()
 
-        await act(async () => {
-          fireEvent.change(email, { target: { value: 'test@example.com' } })
-          fireEvent.click(sendCode)
-        })
+        fireEvent.change(email, { target: { value: 'test@example.com' } })
+        fireEvent.click(sendCode)
 
-        expect(email).toBeDisabled()
+        await waitFor(() => expect(email).toBeDisabled())
         expect(mockOpenToast).toHaveBeenCalledWith({
           message: expect.stringContaining('인증코드가 발송되었습니다.'),
           severity: 'info',
         })
       })
       test('잘못된 이메일 형식인 경우 에러가 표시된다.', async () => {
-        await renderSignUpPage()
+        renderSignUpPage()
 
         const { email } = getFirstStepFields()
 
+        // NOTE : act로 감싸지 않으면 에러가 발생함 (When testing, code that causes React state updates should be wrapped into act(...):)
         await act(async () => {
           fireEvent.change(email, { target: { value: 'invalid-email' } })
         })
@@ -163,22 +154,23 @@ describe('회원가입 페이지', () => {
         expect(errorMessage).toBeInTheDocument()
       })
       test('잘못된 이메일을 전송하는 경우 토스트 메시지가 표시된다.', async () => {
-        await renderSignUpPage()
+        renderSignUpPage()
 
         const { email } = getFirstStepFields()
         const { sendCode } = getFirstStepButtons()
 
         // 잘못된 이메일 입력
-        await act(async () => {
-          fireEvent.change(email, { target: { value: 'invalid-email' } })
-          fireEvent.click(sendCode)
-        })
+        fireEvent.change(email, { target: { value: 'invalid-email' } })
+        fireEvent.click(sendCode)
 
         // 토스트 메시지가 표시되는지 확인
-        expect(mockOpenToast).toHaveBeenCalledWith({
-          message: expect.stringContaining('이메일 형식을 다시 확인해주세요.'),
-          severity: 'error',
-        })
+        await waitFor(() =>
+          expect(mockOpenToast).toHaveBeenCalledWith({
+            message:
+              expect.stringContaining('이메일 형식을 다시 확인해주세요.'),
+            severity: 'error',
+          }),
+        )
       })
     })
     describe('인증코드', () => {
@@ -536,6 +528,23 @@ describe('회원가입 페이지', () => {
       })
     })
     describe('회원가입 완료', () => {
+      beforeEach(() => {
+        server.use(
+          http.post(API_PATH.main.get, () => {
+            return HttpResponse.json(
+              { code: MOCK_VERIFY_CODE, seed: MOCK_VERIFY_SEED },
+              { status: HTTP_STATUS.ok },
+            )
+          }),
+          http.post(API_PATH.main.receive, () => {
+            return HttpResponse.json(
+              { accessToken: 'mock-access-token' },
+              { status: HTTP_STATUS.ok },
+            )
+          }),
+        )
+      })
+
       test('모든 입력이 유효한 경우 회원가입이 완료된다.', async () => {
         const { name, nickname } = getSecondStepFields()
         const { verifyNickname, signUp } = getSecondStepButtons()
@@ -560,7 +569,7 @@ describe('회원가입 페이지', () => {
       })
       test('유효하지 않은 입력이 있는 경우 해당 필드로 포커스가 이동한다.', async () => {
         const { name, nickname } = getSecondStepFields()
-        const { verifyNickname, signUp } = getSecondStepButtons()
+        const { signUp } = getSecondStepButtons()
 
         // CASE 1: 아무것도 입력하지 않은 경우
         await act(async () => {

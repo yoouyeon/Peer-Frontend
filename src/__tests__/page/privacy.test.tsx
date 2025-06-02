@@ -71,31 +71,53 @@ describe('약관 동의 페이지', () => {
   })
 
   describe('체크박스 인터랙션', () => {
-    test('전체 동의 체크박스를 체크하면 아래 두 체크박스도 체크되어야 한다.', async () => {
+    test('전체 동의 체크박스가 정상적으로 동작한다.', async () => {
       await renderPrivacyPage()
 
       const { allAgree, usage, privacy } = getCheckboxes()
 
+      // when 1 : 전체 동의 체크박스 체크
       await act(async () => {
         fireEvent.click(allAgree)
       })
-
+      // then 1 : 전체 동의 체크박스가 체크되고, privacy와 usage 체크박스도 체크되어야 한다.
+      expect(allAgree).toBeChecked()
       expect(privacy).toBeChecked()
       expect(usage).toBeChecked()
+
+      // when 2 : 전체 동의 체크박스 체크 해제
+      await act(async () => {
+        fireEvent.click(allAgree)
+      })
+      // then 2 : 전체 동의 체크박스가 체크 해제되고, privacy와 usage 체크박스도 체크 해제되어야 한다.
+      expect(allAgree).not.toBeChecked()
+      expect(privacy).not.toBeChecked()
+      expect(usage).not.toBeChecked()
     })
 
-    test('개별 체크박스가 정상적으로 동작한다.', async () => {
+    test('이용 약관과 개인정보 수집 체크박스가 정상적으로 동작한다', async () => {
       await renderPrivacyPage()
 
       const { allAgree, usage, privacy } = getCheckboxes()
 
+      // when 1 : privacy, usage 체크박스만 체크
       await act(async () => {
-        fireEvent.click(allAgree)
         fireEvent.click(privacy)
         fireEvent.click(usage)
       })
 
-      // then
+      // then 1 : 전체 동의 체크박스를 포함해서 모든 체크박스가 체크되어야 한다.
+      expect(allAgree).toBeChecked()
+      expect(privacy).toBeChecked()
+      expect(usage).toBeChecked()
+
+      // when 2 : privacy와 usage 체크박스 체크 해제
+      await act(async () => {
+        fireEvent.click(privacy)
+        fireEvent.click(usage)
+      })
+
+      // then 2 : 모든 체크박스가 체크 해제되어야 한다.
       expect(allAgree).not.toBeChecked()
       expect(privacy).not.toBeChecked()
       expect(usage).not.toBeChecked()

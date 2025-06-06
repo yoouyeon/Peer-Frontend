@@ -19,6 +19,7 @@ const API_PATH = {
   signin: {
     reissue: `${BASE_URL}/api/v1/signin/reissue`,
   },
+  logout: `${BASE_URL}/api/v1/logout`,
   profile: {
     get: `${BASE_URL}/api/v1/profile`,
   },

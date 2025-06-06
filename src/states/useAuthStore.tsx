@@ -17,8 +17,6 @@ const useAuthStore = create<IAuthStore>((set) => {
     ? JSON.parse(authDataJSON)
     : { accessToken: null }
 
-  const API_URL = process.env.NEXT_PUBLIC_CSR_API
-
   return {
     isLogin: !!authData.accessToken,
     accessToken: authData.accessToken,
@@ -45,7 +43,7 @@ const useAuthStore = create<IAuthStore>((set) => {
     logout: (isRefreshing) => {
       if (authData.accessToken && isRefreshing === undefined) {
         axios
-          .get(`${API_URL}/api/v1/logout`, {
+          .get(API_PATH.logout, {
             headers: {
               Authorization: `Bearer ${authData.accessToken}`,
             },

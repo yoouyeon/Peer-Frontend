@@ -65,6 +65,7 @@ describe('useAuthStore', () => {
       expect(result.current.isLogin).toBe(true)
       expect(result.current.accessToken).toBe(MOCK_ACCESS_TOKEN)
     })
+
     test('로컬스토리지에 access token을 저장한다.', () => {
       const { result } = renderUseAuthStore()
       const login = result.current.login
@@ -76,6 +77,7 @@ describe('useAuthStore', () => {
         JSON.stringify({ accessToken: MOCK_ACCESS_TOKEN }),
       )
     })
+
     test('프로필 조회 API를 호출한다', () => {
       const { result } = renderUseAuthStore()
       const login = result.current.login
@@ -88,6 +90,7 @@ describe('useAuthStore', () => {
         },
       })
     })
+
     test('닉네임 스토어에 조회한 닉네임을 저장한다', async () => {
       const { result } = renderUseAuthStore()
       const login = result.current.login
@@ -103,18 +106,15 @@ describe('useAuthStore', () => {
   })
 
   describe('로그아웃', () => {
-    const MOCK_NICKNAME = 'testNickname'
+    beforeAll(() => {
+      // NOTE - 초기값을 로그인 상태로 설정하기 위한 로컬스토리지 모킹 - 🚨 초기값이 설정되지 않음
+      getItemSpy.mockReturnValue(
+        JSON.stringify({ accessToken: MOCK_ACCESS_TOKEN }),
+      )
+    })
+
     beforeEach(async () => {
       jest.clearAllMocks()
-      // 프로필 조회와 로그아웃 API를 모킹
-      axiosGetSpy
-        .mockResolvedValueOnce({ data: { nickname: MOCK_NICKNAME } }) // 프로필 API 응답
-        .mockResolvedValueOnce({ data: { message: 'Logged out' } }) // 로그아웃 API 응답
-
-      // 로그인 상태로 설정
-      const { result } = renderUseAuthStore()
-      const login = result.current.login
-      await act(() => login(MOCK_ACCESS_TOKEN))
     })
 
     test('상태가 올바르게 변경된다.', async () => {
@@ -126,6 +126,7 @@ describe('useAuthStore', () => {
       expect(result.current.isLogin).toBe(false)
       expect(result.current.accessToken).toBeNull()
     })
+
     test('로컬스토리지에서 access token을 제거한다.', async () => {
       const { result } = renderUseAuthStore()
       const logout = result.current.logout
@@ -134,6 +135,7 @@ describe('useAuthStore', () => {
 
       expect(removeItemSpy).toHaveBeenCalledWith('authData')
     })
+
     test('로그아웃 API를 호출한다', async () => {
       const { result } = renderUseAuthStore()
       const logout = result.current.logout
@@ -148,6 +150,7 @@ describe('useAuthStore', () => {
         },
       })
     })
+
     test('닉네임 스토어에 닉네임을 초기화한다', () => {
       const { result } = renderUseAuthStore()
       const logout = result.current.logout

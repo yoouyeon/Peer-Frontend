@@ -9,8 +9,8 @@ import {
   MOCK_INIT_CODE,
   MOCK_INIT_SECRET,
   MOCK_REFRESH_TOKEN,
-  MOCK_SIGN_UP_EMAIL,
   MOCK_SIGN_UP_PASSWORD,
+  MOCK_USER_PROFILE,
   MOCK_VERIFY_CODE,
   MOCK_VERIFY_SEED,
   REFRESH_TOKEN_EXPIRATION_TIME,
@@ -94,6 +94,7 @@ export const handlers = [
     API_PATH.main.receive,
     async ({ request }) => {
       const { code, token } = await request.json()
+      const { email } = MOCK_USER_PROFILE
 
       if (code !== MOCK_VERIFY_CODE) {
         return HttpResponse.json(
@@ -113,12 +114,7 @@ export const handlers = [
             return HttpResponse.json(null, { status: HTTP_STATUS.ok })
           case EApiType.SIGN_IN: {
             const { userEmail, password } = payload
-            if (
-              !(
-                userEmail === MOCK_SIGN_UP_EMAIL &&
-                password === MOCK_SIGN_UP_PASSWORD
-              )
-            ) {
+            if (!(userEmail === email && password === MOCK_SIGN_UP_PASSWORD)) {
               return HttpResponse.json(
                 { message: 'Email 혹은 비밀번호가 잘못되었습니다!' },
                 { status: HTTP_STATUS.unauthorized },

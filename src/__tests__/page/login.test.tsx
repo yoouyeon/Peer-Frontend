@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
-  MOCK_SIGN_UP_EMAIL,
+  MOCK_USER_PROFILE,
   MOCK_SIGN_UP_PASSWORD,
   MOCK_VERIFY_CODE,
   MOCK_VERIFY_SEED,
@@ -133,12 +133,13 @@ describe('로그인 페이지', () => {
 
     test('유효한 이메일과 비밀번호로 로그인하는 경우 성공한 뒤 메인 페이지로 이동한다.', async () => {
       renderLoginPage()
+      const { email: userEmail } = MOCK_USER_PROFILE
 
       const { email, password } = getFields()
       const { login } = getButtons()
       const user = userEvent.setup()
 
-      await user.type(email, MOCK_SIGN_UP_EMAIL)
+      await user.type(email, userEmail)
       await user.type(password, MOCK_SIGN_UP_PASSWORD)
       await user.click(login)
 
@@ -154,6 +155,7 @@ describe('로그인 페이지', () => {
 
     test('입력이 유효하지 않은 경우 에러 메시지를 표시한다.', async () => {
       renderLoginPage()
+      const { email: userEmail } = MOCK_USER_PROFILE
 
       const { email, password } = getFields()
       const { login } = getButtons()
@@ -165,7 +167,7 @@ describe('로그인 페이지', () => {
 
       expect(screen.getByText('이메일 형식이 아닙니다')).toBeInTheDocument()
 
-      await user.type(email, MOCK_SIGN_UP_EMAIL)
+      await user.type(email, userEmail)
       await user.clear(password)
       await user.click(login)
       expect(screen.getByText('비밀번호를 입력해주세요')).toBeInTheDocument()
@@ -180,14 +182,14 @@ describe('로그인 페이지', () => {
           )
         }),
       )
-
+      const { email: userEmail } = MOCK_USER_PROFILE
       renderLoginPage()
 
       const { email, password } = getFields()
       const { login } = getButtons()
       const user = userEvent.setup()
 
-      await user.type(email, MOCK_SIGN_UP_EMAIL)
+      await user.type(email, userEmail)
       await user.type(password, MOCK_SIGN_UP_PASSWORD)
       await user.click(login)
 

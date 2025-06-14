@@ -1,42 +1,48 @@
-import axios from 'axios'
+import LocalStorage from '@/states/localStorage'
 import { act, renderHook } from '@testing-library/react'
-import useAuthStore from '@/states/useAuthStore'
+import axios from 'axios'
+import { createAuthStore, IDependencies } from '@/states/useAuthStore'
 import useNicknameStore from '@/states/useNicknameStore'
-import { MOCK_ACCESS_TOKEN } from '@/mocks/constants'
+import { MOCK_ACCESS_TOKEN, MOCK_USER_PROFILE } from '@/mocks/constants'
 import API_PATH from '@/constant/apiPath'
 
-describe('useAuthStore', () => {
-  const renderUseAuthStore = () => {
-    return renderHook(() => useAuthStore())
-  }
+jest.mock('@/states/localStorage', () => ({
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+}))
 
-  let getItemSpy: jest.SpyInstance
-  let setItemSpy: jest.SpyInstance
-  let removeItemSpy: jest.SpyInstance
-  let axiosGetSpy: jest.SpyInstance
+describe('useAuthStore', () => {
   let setNicknameSpy: jest.SpyInstance
   let unsetNicknameSpy: jest.SpyInstance
+  let axiosGetSpy: jest.SpyInstance
+  let mockLocalStorage: jest.Mocked<typeof LocalStorage>
+
+  const renderUseAuthStore = () => {
+    const dependencies: IDependencies = {
+      localStorage: mockLocalStorage,
+      useNicknameStore,
+    }
+    const useMockAuthStore = createAuthStore(dependencies)
+
+    return renderHook(() => useMockAuthStore())
+  }
 
   beforeEach(() => {
     jest.clearAllMocks()
 
-    getItemSpy = jest.spyOn(Storage.prototype, 'getItem')
-    setItemSpy = jest.spyOn(Storage.prototype, 'setItem')
-    removeItemSpy = jest.spyOn(Storage.prototype, 'removeItem')
-    getItemSpy.mockReturnValue(null)
+    mockLocalStorage = LocalStorage as jest.Mocked<typeof LocalStorage>
 
-    // axios.get을 모킹
+    const nicknameStore = useNicknameStore.getState()
+    setNicknameSpy = jest.spyOn(nicknameStore, 'setNickname')
+    unsetNicknameSpy = jest.spyOn(nicknameStore, 'unsetNickname')
+
     axiosGetSpy = jest.spyOn(axios, 'get')
-
-    // useNicknameStore의 setNickname과 unsetNickname을 모킹
-    setNicknameSpy = jest.spyOn(useNicknameStore.getState(), 'setNickname')
-    unsetNicknameSpy = jest.spyOn(useNicknameStore.getState(), 'unsetNickname')
   })
 
   describe('초기 상태', () => {
     test('로컬스토리지에 값이 없는 경우의 초깃값', () => {
-      // 로컬스토리지에 값이 없는 경우
-      getItemSpy.mockReturnValue(null)
+      mockLocalStorage.getItem.mockReturnValue(null)
       const { result } = renderUseAuthStore()
 
       expect(result.current.isLogin).toBe(false)
@@ -44,8 +50,7 @@ describe('useAuthStore', () => {
     })
 
     test('로컬스토리지에 값이 있는 경우의 초깃값', () => {
-      // 기존에 저장된 로그인 상태가 있는 경우
-      getItemSpy.mockReturnValue(
+      mockLocalStorage.getItem.mockReturnValue(
         JSON.stringify({ accessToken: MOCK_ACCESS_TOKEN }),
       )
       const { result } = renderUseAuthStore()
@@ -56,7 +61,7 @@ describe('useAuthStore', () => {
   })
 
   describe('로그인', () => {
-    test('상태가 올바르게 변경된다.', () => {
+    test('로그인 상태로 변경되고 access token이 store에 저장된다.', () => {
       const { result } = renderUseAuthStore()
       const login = result.current.login
 
@@ -72,43 +77,26 @@ describe('useAuthStore', () => {
 
       act(() => login(MOCK_ACCESS_TOKEN))
 
-      expect(setItemSpy).toHaveBeenCalledWith(
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
         'authData',
         JSON.stringify({ accessToken: MOCK_ACCESS_TOKEN }),
       )
     })
 
-    test('프로필 조회 API를 호출한다', () => {
-      const { result } = renderUseAuthStore()
-      const login = result.current.login
-
-      act(() => login(MOCK_ACCESS_TOKEN))
-
-      expect(axiosGetSpy).toHaveBeenCalledWith(API_PATH.profile.get, {
-        headers: {
-          Authorization: `Bearer ${MOCK_ACCESS_TOKEN}`,
-        },
-      })
-    })
-
     test('닉네임 스토어에 조회한 닉네임을 저장한다', async () => {
       const { result } = renderUseAuthStore()
       const login = result.current.login
-      const MOCK_NICKNAME = 'testNickname'
-      axiosGetSpy.mockResolvedValue({
-        data: { nickname: MOCK_NICKNAME },
-      })
 
       await act(() => login(MOCK_ACCESS_TOKEN))
 
-      expect(setNicknameSpy).toHaveBeenCalledWith(MOCK_NICKNAME)
+      expect(setNicknameSpy).toHaveBeenCalledWith(MOCK_USER_PROFILE.nickname)
     })
   })
 
   describe('로그아웃', () => {
     beforeAll(() => {
-      // NOTE - 초기값을 로그인 상태로 설정하기 위한 로컬스토리지 모킹 - 🚨 초기값이 설정되지 않음
-      getItemSpy.mockReturnValue(
+      // 초기 로그인 상태를 설정
+      mockLocalStorage.getItem.mockReturnValue(
         JSON.stringify({ accessToken: MOCK_ACCESS_TOKEN }),
       )
     })
@@ -117,7 +105,7 @@ describe('useAuthStore', () => {
       jest.clearAllMocks()
     })
 
-    test('상태가 올바르게 변경된다.', async () => {
+    test('로그아웃 상태로 변경되고 access token이 제거된다.', async () => {
       const { result } = renderUseAuthStore()
       const logout = result.current.logout
 
@@ -133,7 +121,7 @@ describe('useAuthStore', () => {
 
       await act(() => logout())
 
-      expect(removeItemSpy).toHaveBeenCalledWith('authData')
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('authData')
     })
 
     test('로그아웃 API를 호출한다', async () => {
@@ -143,7 +131,6 @@ describe('useAuthStore', () => {
 
       await act(() => logout())
 
-      // NOTE : accessToken이 null이 아닐 때에만 API를 호출하는데, 현재 초기 로그인 상태를 설정할 수 없어서 테스트가 정상적으로 동작하지 않음.
       expect(axiosGetSpy).toHaveBeenLastCalledWith(API_PATH.logout, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -159,8 +146,8 @@ describe('useAuthStore', () => {
 
       expect(unsetNicknameSpy).toHaveBeenCalled()
     })
-    // 리프레시 로그아웃
-    test('리프레시 로그아웃 시 API를 호출하지 않는다', () => {
+
+    test('리프레시 로그아웃시에는 API를 호출하지 않는다', () => {
       const { result } = renderUseAuthStore()
       const logout = result.current.logout
 

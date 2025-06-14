@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { create, StateCreator } from 'zustand'
 import LocalStorage from './localStorage'
 import axios from 'axios'
 import useNicknameStore from './useNicknameStore'
@@ -11,13 +11,21 @@ interface IAuthStore {
   logout: (isRefreshing?: boolean) => void
 }
 
-const useAuthStore = create<IAuthStore>((set) => {
-  const authDataJSON = LocalStorage.getItem('authData')
+export interface IDependencies {
+  localStorage: typeof LocalStorage
+  useNicknameStore: typeof useNicknameStore
+}
+
+export const createAuthStore = (deps: IDependencies) => {
+  const { localStorage, useNicknameStore } = deps
+
+  // 초기 인증 데이터 로드
+  const authDataJSON = localStorage.getItem('authData')
   const authData = authDataJSON
     ? JSON.parse(authDataJSON)
     : { accessToken: null }
 
-  return {
+  const stateCreator: StateCreator<IAuthStore> = (set) => ({
     isLogin: !!authData.accessToken,
     accessToken: authData.accessToken,
     login: (accessToken) => {
@@ -59,7 +67,14 @@ const useAuthStore = create<IAuthStore>((set) => {
       }))
       useNicknameStore.getState().unsetNickname()
     },
-  }
+  })
+
+  return create<IAuthStore>(stateCreator)
+}
+
+const useAuthStore = createAuthStore({
+  localStorage: LocalStorage,
+  useNicknameStore,
 })
 
 export default useAuthStore

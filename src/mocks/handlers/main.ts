@@ -91,7 +91,7 @@ export const handlers = [
 
   // 최종 데이터 수신 API
   http.post<PathParams, ReceiveBody, ReceiveResponse | ErrorResponse>(
-    '/api/v1/main/receive',
+    API_PATH.main.receive,
     async ({ request }) => {
       const { code, token } = await request.json()
 

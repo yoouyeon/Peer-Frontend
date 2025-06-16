@@ -41,6 +41,7 @@ const PasswordField = ({
       </CuTextFieldLabel>
       <TextField
         {...field}
+        id="password"
         autoComplete="new-password"
         error={errors.password !== undefined}
         placeholder="비밀번호를 입력하세요."

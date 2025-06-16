@@ -25,6 +25,7 @@ const EmailField = ({
       </CuTextFieldLabel>
       <CuTextField
         {...field}
+        id="email"
         disabled={emailSendStatus === 'submit'}
         autoComplete="email"
         error={emailSendStatus === 'error'}

@@ -29,6 +29,7 @@ const NickNameField = ({
       </CuTextFieldLabel>
       <CuTextField
         {...field}
+        id="nickName"
         onChange={(e) => {
           field.onChange(e)
           setNickNameSendStatus('before')

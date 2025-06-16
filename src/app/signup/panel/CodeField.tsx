@@ -22,6 +22,7 @@ const CodeField = ({
       </CuTextFieldLabel>
       <CuTextField
         {...field}
+        id="code"
         disabled={codeSendStatus === 'submit'}
         autoComplete="off"
         error={codeSendStatus === 'error'}

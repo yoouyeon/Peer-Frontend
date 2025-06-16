@@ -14,11 +14,12 @@ const NameField = ({
 }) => {
   return (
     <>
-      <CuTextFieldLabel htmlFor="name" >
-       <Typography variant="Caption">이름</Typography>
-        </CuTextFieldLabel>
+      <CuTextFieldLabel htmlFor="name">
+        <Typography variant="Caption">이름</Typography>
+      </CuTextFieldLabel>
       <CuTextField
         {...field}
+        id="name"
         autoComplete="name"
         error={false}
         type="text"

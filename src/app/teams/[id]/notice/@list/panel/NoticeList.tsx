@@ -24,7 +24,7 @@ const NoticeList = ({
   const { setNotice } = useTeamPageState()
   const { data, error, isLoading, size, setSize, targetRef } =
     useInfiniteSWRScroll(
-      `${API_PATH.teamPage.notice}/${teamId}?keyword=&${keyword}pageSize=${10}`,
+      `${API_PATH.teamPage.notice}/${teamId}?keyword=${keyword}&pageSize=${10}`,
       (url: string) => axiosWithAuth.get(url).then((res) => res.data),
     )
   const router = useRouter()
@@ -79,7 +79,9 @@ const NoticeList = ({
           </Fragment>
         )
       })}
-      <Box ref={targetRef}>{isLoading && '로딩중입니다...'}</Box>
+      <Box data-testid="observe-target" ref={targetRef}>
+        {isLoading && '로딩중입니다...'}
+      </Box>
     </ListStack>
   )
 }

@@ -30,6 +30,7 @@ const CuButton = ({
   disabled,
   TypographyProps,
   form,
+  ...props
 }: CuButtonProps) => {
   return (
     <Button
@@ -42,6 +43,7 @@ const CuButton = ({
       fullWidth={fullWidth}
       disabled={disabled}
       form={form}
+      {...props}
     >
       <Typography
         {...TypographyProps}

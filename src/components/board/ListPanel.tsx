@@ -93,6 +93,7 @@ const SearchPopover = ({
       <IconButton
         onClick={handleOpenPopover}
         aria-describedby={'search-popover'}
+        aria-label={'검색창 열기'}
       >
         <SearchIcon sx={{ color: 'text.normal' }} />
       </IconButton>
@@ -119,6 +120,9 @@ const SearchPopover = ({
             inputRef={textFieldRef}
             fullWidth
             InputProps={{
+              inputProps: {
+                'aria-label': '검색어 입력',
+              },
               endAdornment: (
                 <InputAdornment position="end">
                   <CuButton
@@ -145,7 +149,7 @@ export const IconButtonContainer = ({
   return (
     <Stack direction={'row'}>
       <SearchPopover setKeyword={setKeyword} />
-      <IconButton onClick={onClickPlus}>
+      <IconButton onClick={onClickPlus} aria-label="새 글쓰기">
         <PlusIcon sx={{ color: 'text.normal' }} />
       </IconButton>
     </Stack>
@@ -169,7 +173,7 @@ export const ListBoxContainer = ({ children }: IChildrenProps) => {
 
 export const ListStack = ({ children }: IChildrenProps) => {
   return (
-    <Stack sx={style.ListStack} spacing={'1rem'}>
+    <Stack data-testid={'post-list'} sx={style.ListStack} spacing={'1rem'}>
       {children}
     </Stack>
   )
@@ -199,6 +203,7 @@ export const ListItem = ({
   const { isPc } = useMedia()
   return (
     <Stack
+      data-testid={'post-list-item'}
       sx={{ ...style.ListItem, padding: isPc ? '0.625rem 1rem' : '0' }}
       onClick={onClick}
       spacing={'0.25rem'}

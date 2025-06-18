@@ -1,12 +1,10 @@
 import { http, HttpResponse } from 'msw'
 import API_PATH from '@/constant/apiPath'
 import {
-  getNextPostId,
   MOCK_BOARD_ID,
   MOCK_TEAM_ID,
   mockBoardList,
-  mockCommentMap,
-  mockPostMap,
+  mockPostDataStore,
   POST_TYPE,
 } from '@/mocks/data/teamPage'
 import { validateAccessToken } from '@/mocks/utils'
@@ -57,6 +55,7 @@ export const handlers = [
       status: HTTP_STATUS.ok,
     })
   }),
+
   http.get(`${API_PATH.teamPage.notice}/:teamId`, ({ params, request }) => {
     const validationResult = validateAccessToken(request)
     if (!validationResult.isValid) {
@@ -85,9 +84,7 @@ export const handlers = [
     }
 
     // 필터링
-    const noticeList = Array.from(mockPostMap.values()).filter(
-      (post) => post.type === POST_TYPE.NOTICE,
-    )
+    const noticeList = mockPostDataStore.getPostsByType(POST_TYPE.NOTICE)
     const filteredNoticeList = noticeList.filter((notice) => {
       if (keyword === '') return true
       return notice.title.includes(keyword)
@@ -99,7 +96,7 @@ export const handlers = [
     const paginatedNoticeList = filteredNoticeList.slice(start, end)
     const totalElements = filteredNoticeList.length
     const totalPages = Math.ceil(totalElements / pageSize)
-    const last = page >= totalPages - 1
+    const last = page * pageSize >= totalElements
 
     return HttpResponse.json<IPagination<ITeamNotice[]>>(
       {
@@ -150,7 +147,7 @@ export const handlers = [
     }
 
     const numberPostId = Number(postId)
-    const post = mockPostMap.get(numberPostId)
+    const post = mockPostDataStore.getPost(numberPostId)
     if (post) {
       return HttpResponse.json(post, { status: HTTP_STATUS.ok })
     }
@@ -189,11 +186,9 @@ export const handlers = [
     const pageSize = Number(url.searchParams.get('pageSize') || 10)
 
     // 게시판은 1개 뿐
-    const postList = Array.from(mockPostMap.values()).filter(
-      (post) => post.type === POST_TYPE.POST,
-    )
+    const postList = mockPostDataStore.getPostsByType(POST_TYPE.POST)
     // 필터링
-    const filteredPostsList = Array.from(postList.values()).filter((post) => {
+    const filteredPostsList = postList.filter((post) => {
       if (keyword === '') return true
       return post.title.includes(keyword)
     })
@@ -204,7 +199,7 @@ export const handlers = [
     const paginatedNoticeList = filteredPostsList.slice(start, end)
     const totalElements = filteredPostsList.length
     const totalPages = Math.ceil(totalElements / pageSize)
-    const last = page >= totalPages - 1
+    const last = page * pageSize >= totalElements
 
     return HttpResponse.json<IPagination<ITeamPost[]>>(
       {
@@ -264,19 +259,15 @@ export const handlers = [
       }
 
       // 게시글 등록
-      const newPostId = getNextPostId()
-      const newPost = {
-        type: POST_TYPE.POST,
-        postId: newPostId,
-        title,
-        nickname: '김개발',
-        hit: 0,
-        date: new Date(),
-        content,
-        isAuthor: true,
-      }
-      mockPostMap.set(newPostId, newPost)
-      mockCommentMap.set(newPostId, new Map())
+      const newPostId = mockPostDataStore.createPost(
+        {
+          title,
+          nickname: '김개발',
+          content,
+          isAuthor: true,
+        },
+        POST_TYPE.POST,
+      )
       return HttpResponse.json(
         {
           boardId: MOCK_BOARD_ID,

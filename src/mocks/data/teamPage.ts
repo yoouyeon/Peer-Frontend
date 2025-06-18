@@ -13,6 +13,8 @@ export const MOCK_TEAM_ID = 1
 export const MOCK_NOTICE_ID = 1
 export const MOCK_POST_ID = 2
 export const MOCK_BOARD_ID = 1
+export const MOCK_NOTICE_COMMENT_ID = 1
+export const MOCK_POST_COMMENT_ID = 2
 
 // ANCHOR - 타입 정의
 export type PostType = (typeof POST_TYPE)[keyof typeof POST_TYPE]
@@ -81,9 +83,9 @@ class MockPostDataStore {
       MOCK_NOTICE_ID,
       new Map([
         [
-          1,
+          MOCK_NOTICE_COMMENT_ID,
           {
-            commentId: 1,
+            commentId: MOCK_NOTICE_COMMENT_ID,
             authorImage: '',
             authorNickname: '김개발',
             content: '모두들 화이팅!',
@@ -98,9 +100,9 @@ class MockPostDataStore {
       MOCK_POST_ID,
       new Map([
         [
-          2,
+          MOCK_POST_COMMENT_ID,
           {
-            commentId: 2,
+            commentId: MOCK_POST_COMMENT_ID,
             authorImage: '',
             authorNickname: '김개발',
             content: '자유롭게 의견을 남겨주세요!',
@@ -236,11 +238,7 @@ class MockPostDataStore {
 }
 
 export const mockPostDataStore = new MockPostDataStore()
-// mockPostDataStore.addMockPost(10, POST_TYPE.NOTICE)
-// console.log(
-//   mockPostDataStore.getPostsByType(POST_TYPE.NOTICE).length,
-//   '공지사항 개수',
-// )
+
 export const mockBoardList = [
   {
     boardId: MOCK_BOARD_ID,

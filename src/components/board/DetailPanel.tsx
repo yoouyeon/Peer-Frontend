@@ -64,6 +64,7 @@ export const DetailPage = ({
       title={title[boardType]}
       onClose={handleGoBack}
       mobileFullSize
+      closeButtonLabel={'이전 페이지'}
     >
       <Stack
         sx={{ ...style.DetailPage, height: '100%', overflowY: 'scroll' }}
@@ -134,9 +135,9 @@ const ContentTitle = ({ title }: { title: string }) => {
   )
 }
 
-const Content = ({ content }: { content: string }) => {
+const Content = ({ content, label }: { content: string; label?: string }) => {
   return (
-    <Typography color={'text.alternative'} variant={'Body2'}>
+    <Typography color={'text.alternative'} variant={'Body2'} aria-label={label}>
       {content}
     </Typography>
   )
@@ -153,17 +154,18 @@ export const DetailContent = ({
     <Stack spacing={isPc ? '1.5rem' : '1rem'}>
       <Stack spacing={'0.5rem'}>
         <ContentTitle title={'제목'} />
-        <Content content={title} />
+        <Content label={'제목'} content={title} />
       </Stack>
       <Stack spacing={'0.5rem'}>
         <ContentTitle title={'작성일'} />
         <Content
+          label={'작성일'}
           content={dayjs(UTCtoLocalTime(createdAt)).format('YYYY-MM-DD')}
         />
       </Stack>
       <Stack spacing={'0.5rem'}>
         <ContentTitle title={'작성자'} />
-        <Content content={authorNickname} />
+        <Content label={'작성자'} content={authorNickname} />
       </Stack>
       <Stack spacing={'0.5rem'}>
         <ContentTitle title={'내용'} />

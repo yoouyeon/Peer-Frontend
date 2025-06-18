@@ -38,4 +38,5 @@ export interface ICuModalProps extends Omit<ModalProps, 'onClose'> {
   textButton?: IModalButton
   mobileFullSize?: boolean // 기본적으로 false입니다.
   onClose: () => void
+  closeButtonLabel?: string // 닫기 버튼에 설정할 aria-label입니다.
 }

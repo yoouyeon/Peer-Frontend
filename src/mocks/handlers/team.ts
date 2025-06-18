@@ -8,6 +8,7 @@ import { validateAccessToken } from '@/mocks/utils'
 import { ErrorResponse } from '@/mocks/types'
 import { ITeamMemberInfo } from '@/app/teams/[id]/panel/TeamInfoContainer'
 import { MOCK_TEAM_ID, mockPostDataStore } from '../data/teamPage'
+import { MOCK_USER_PROFILE } from '../constants'
 
 type TeamMainParam = {
   teamId: string
@@ -183,9 +184,9 @@ export const handlers = [
       // 댓글 등록 (공지사항 & 게시판)
       mockPostDataStore.addComment(postId, {
         authorImage: '',
-        authorNickname: '길동홍',
+        authorNickname: MOCK_USER_PROFILE.nickname,
         content,
-        authorId: 2,
+        authorId: MOCK_USER_PROFILE.id,
       })
 
       return HttpResponse.json(

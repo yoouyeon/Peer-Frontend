@@ -61,21 +61,21 @@ describe('useAuthStore', () => {
   })
 
   describe('로그인', () => {
-    test('로그인 상태로 변경되고 access token이 store에 저장된다.', () => {
+    test('로그인 상태로 변경되고 access token이 store에 저장된다.', async () => {
       const { result } = renderUseAuthStore()
       const login = result.current.login
 
-      act(() => login(MOCK_ACCESS_TOKEN))
+      await act(async () => login(MOCK_ACCESS_TOKEN))
 
       expect(result.current.isLogin).toBe(true)
       expect(result.current.accessToken).toBe(MOCK_ACCESS_TOKEN)
     })
 
-    test('로컬스토리지에 access token을 저장한다.', () => {
+    test('로컬스토리지에 access token을 저장한다.', async () => {
       const { result } = renderUseAuthStore()
       const login = result.current.login
 
-      act(() => login(MOCK_ACCESS_TOKEN))
+      await act(async () => login(MOCK_ACCESS_TOKEN))
 
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
         'authData',
@@ -87,7 +87,7 @@ describe('useAuthStore', () => {
       const { result } = renderUseAuthStore()
       const login = result.current.login
 
-      await act(() => login(MOCK_ACCESS_TOKEN))
+      await act(async () => login(MOCK_ACCESS_TOKEN))
 
       expect(setNicknameSpy).toHaveBeenCalledWith(MOCK_USER_PROFILE.nickname)
     })
@@ -109,7 +109,7 @@ describe('useAuthStore', () => {
       const { result } = renderUseAuthStore()
       const logout = result.current.logout
 
-      await act(() => logout())
+      await act(async () => logout())
 
       expect(result.current.isLogin).toBe(false)
       expect(result.current.accessToken).toBeNull()
@@ -119,7 +119,7 @@ describe('useAuthStore', () => {
       const { result } = renderUseAuthStore()
       const logout = result.current.logout
 
-      await act(() => logout())
+      await act(async () => logout())
 
       expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('authData')
     })
@@ -129,7 +129,7 @@ describe('useAuthStore', () => {
       const logout = result.current.logout
       const accessToken = result.current.accessToken
 
-      await act(() => logout())
+      await act(async () => logout())
 
       expect(axiosGetSpy).toHaveBeenLastCalledWith(API_PATH.logout, {
         headers: {
@@ -138,20 +138,20 @@ describe('useAuthStore', () => {
       })
     })
 
-    test('닉네임 스토어에 닉네임을 초기화한다', () => {
+    test('닉네임 스토어에 닉네임을 초기화한다', async () => {
       const { result } = renderUseAuthStore()
       const logout = result.current.logout
 
-      act(() => logout())
+      await act(async () => logout())
 
       expect(unsetNicknameSpy).toHaveBeenCalled()
     })
 
-    test('리프레시 로그아웃시에는 API를 호출하지 않는다', () => {
+    test('리프레시 로그아웃시에는 API를 호출하지 않는다', async () => {
       const { result } = renderUseAuthStore()
       const logout = result.current.logout
 
-      act(() => logout(true))
+      await act(async () => logout(true))
 
       expect(axiosGetSpy).not.toHaveBeenCalledWith(
         API_PATH.logout,

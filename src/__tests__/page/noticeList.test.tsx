@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { useRouter } from 'next/navigation'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
@@ -120,9 +120,8 @@ describe('데이터 페칭 테스트', () => {
       expect(screen.getByText('첫번째 공지사항')).toBeInTheDocument()
     })
     const searchIconButton = screen.getByRole('button', { name: '검색창 열기' })
-    await act(async () => {
-      searchIconButton.click()
-    })
+
+    await userEvent.click(searchIconButton)
     // 검색창이 열릴 때까지 기다림
     await waitFor(() => {
       expect(
@@ -161,9 +160,7 @@ describe('사용자 인터렉션 테스트', () => {
     renderPage()
 
     const newPostButton = getNewPostButton()
-    await act(async () => {
-      newPostButton.click()
-    })
+    await userEvent.click(newPostButton)
 
     expect(setNoticeSpy).toHaveBeenCalledWith('EDIT')
     expect(useTeamPageState.getState().boardType).toBe('EDIT')
@@ -176,9 +173,7 @@ describe('사용자 인터렉션 테스트', () => {
     })
 
     const firstPost = screen.getAllByTestId('post-list-item')[0]
-    await act(async () => {
-      firstPost.click()
-    })
+    await userEvent.click(firstPost)
 
     expect(setNoticeSpy).toHaveBeenCalledWith('DETAIL', MOCK_NOTICE_ID)
     expect(useTeamPageState.getState().boardType).toBe('DETAIL')

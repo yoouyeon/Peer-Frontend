@@ -122,7 +122,6 @@ describe('로그인 페이지', () => {
           )
         }),
         http.post(API_PATH.main.receive, () => {
-          console.log('RECEIVE handler called')
           return HttpResponse.json(
             { accessToken: 'mock-access-token' },
             { status: HTTP_STATUS.ok },
@@ -193,9 +192,11 @@ describe('로그인 페이지', () => {
       await user.type(password, MOCK_SIGN_UP_PASSWORD)
       await user.click(login)
 
-      expect(mockOpenToast).toHaveBeenCalledWith({
-        message: '로그인 실패',
-        severity: 'error',
+      await waitFor(() => {
+        expect(mockOpenToast).toHaveBeenCalledWith({
+          message: '로그인 실패',
+          severity: 'error',
+        })
       })
     })
   })

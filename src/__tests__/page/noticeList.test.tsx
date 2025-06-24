@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { useRouter } from 'next/navigation'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
@@ -27,15 +27,20 @@ jest.mock('@/states/useAuthStore', () => ({
 }))
 window.alert = jest.fn()
 
-window.IntersectionObserver = jest.fn(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
-  takeRecords: jest.fn(),
-  root: null,
-  rootMargin: '0px',
-  thresholds: [0],
-}))
+let mockCallback: IntersectionObserverCallback
+
+window.IntersectionObserver = jest.fn((callback) => {
+  mockCallback = callback
+  return {
+    observe: jest.fn(),
+    unobserve: jest.fn(),
+    disconnect: jest.fn(),
+    takeRecords: jest.fn(),
+    root: null,
+    rootMargin: '0px',
+    thresholds: [0],
+  }
+})
 
 const setNoticeSpy = jest.spyOn(useTeamPageState.getState(), 'setNotice')
 
@@ -138,17 +143,23 @@ describe('데이터 페칭 테스트', () => {
       expect(screen.getAllByTestId('post-list-item')).toHaveLength(1) // 검색어에 해당하는 공지사항이 1개여야 함
     })
   })
-  // 🚨 안됨
-  // test('스크롤 시 추가 데이터를 가져온다.', async () => {
-  //   renderPage()
-  //   await waitFor(() => {
-  //     expect(screen.getByText('첫번째 공지사항')).toBeInTheDocument()
-  //   })
-  //   // FIXME : 무한스크롤 요청이 되지 않음.
-  //   await waitFor(() => {
-  //     expect(screen.getAllByTestId('post-list-item')).toHaveLength(11)
-  //   })
-  // })
+
+  test('스크롤 시 추가 데이터를 가져온다.', async () => {
+    renderPage()
+    await waitFor(() => {
+      expect(screen.getByText('첫번째 공지사항')).toBeInTheDocument()
+    })
+    act(() => {
+      mockCallback(
+        [{ isIntersecting: true, target: {} } as IntersectionObserverEntry],
+        {} as IntersectionObserver,
+      )
+    })
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('post-list-item')).toHaveLength(11)
+    })
+  })
 })
 
 describe('사용자 인터렉션 테스트', () => {

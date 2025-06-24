@@ -42,8 +42,6 @@ window.IntersectionObserver = jest.fn((callback) => {
   }
 })
 
-const setNoticeSpy = jest.spyOn(useTeamPageState.getState(), 'setNotice')
-
 const renderPage = () => {
   return render(<TeamNotice params={{ id: MOCK_TEAM_ID.toString() }} />)
 }
@@ -111,14 +109,19 @@ describe('데이터 페칭 테스트', () => {
   })
 
   test('공지사항 목록을 정상적으로 가져온다.', async () => {
+    const EXPECTED_POST_COUNT = 10 // 한 페이지에 10개 공지사항이 랜더링 되어야 함
     renderPage()
     await waitFor(() => {
       expect(screen.getByText('첫번째 공지사항')).toBeInTheDocument()
-      expect(screen.getAllByTestId('post-list-item')).toHaveLength(10) // 한 페이지에 10개 공지사항이 랜더링 되어야 함
+      expect(screen.getAllByTestId('post-list-item')).toHaveLength(
+        EXPECTED_POST_COUNT,
+      )
     })
   })
 
   test('키워드로 검색했을 때 필터링 된 데이터를 가져온다.', async () => {
+    const EXPECTED_POST_COUNT = 1 // 검색어에 해당하는 공지사항이 1개여야 함
+
     renderPage()
     // 데이터가 로드될 때까지 기다림
     await waitFor(() => {
@@ -140,11 +143,15 @@ describe('데이터 페칭 테스트', () => {
     await userEvent.click(searchButton)
     await waitFor(() => {
       expect(screen.getByText(KEYWORD)).toBeInTheDocument()
-      expect(screen.getAllByTestId('post-list-item')).toHaveLength(1) // 검색어에 해당하는 공지사항이 1개여야 함
+      expect(screen.getAllByTestId('post-list-item')).toHaveLength(
+        EXPECTED_POST_COUNT,
+      )
     })
   })
 
   test('스크롤 시 추가 데이터를 가져온다.', async () => {
+    const EXPECTED_POST_COUNT = 11 // 스크롤 시 1개가 추가되어 총 11개가 되어야 함
+
     renderPage()
     await waitFor(() => {
       expect(screen.getByText('첫번째 공지사항')).toBeInTheDocument()
@@ -157,12 +164,24 @@ describe('데이터 페칭 테스트', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getAllByTestId('post-list-item')).toHaveLength(11)
+      expect(screen.getAllByTestId('post-list-item')).toHaveLength(
+        EXPECTED_POST_COUNT,
+      )
     })
   })
 })
 
 describe('사용자 인터렉션 테스트', () => {
+  let setNoticeSpy: jest.SpyInstance
+
+  beforeEach(() => {
+    setNoticeSpy = jest.spyOn(useTeamPageState.getState(), 'setNotice')
+  })
+
+  afterEach(() => {
+    setNoticeSpy.mockRestore()
+  })
+
   const getNewPostButton = () => {
     return screen.getByRole('button', { name: '새 글쓰기' })
   }

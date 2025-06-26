@@ -77,7 +77,7 @@ export const useInfiniteSWRScroll = (
     return () => {
       if (currentRef) observer.unobserve(currentRef)
     }
-  }, [targetRef, isLoadMore])
+  }, [targetRef, isLoadMore, setSize, size])
   return { data, error, isLoading, size, setSize, targetRef }
 }
 

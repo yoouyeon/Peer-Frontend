@@ -1,3 +1,4 @@
+import { handlers as logoutHanders } from './logout'
 import { handlers as messageHandlers } from './message'
 import { handlers as myPortfolioHandlers } from './myPortfolio'
 import { handlers as notiHandlers } from './noti'
@@ -11,6 +12,7 @@ import { handlers as teamHandlers } from './team'
 import { handlers as teamPageHandlers } from './teamPage'
 
 export const handlers = [
+  ...logoutHanders,
   ...messageHandlers,
   ...myPortfolioHandlers,
   ...notiHandlers,

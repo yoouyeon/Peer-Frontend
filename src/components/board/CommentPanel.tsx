@@ -169,7 +169,12 @@ export const CommentItem = ({
   // TODO : 편집 권한 조건 추가할 것 (issue #485)
   const canEdit = comment.isAuthor
   return (
-    <Stack direction={'row'} spacing={'1rem'} alignItems={'flex-start'}>
+    <Stack
+      direction={'row'}
+      spacing={'1rem'}
+      alignItems={'flex-start'}
+      data-testid={'comment-item'}
+    >
       {/* content */}
       <Stack sx={style.CommentContentWrapper}>
         <Stack
@@ -185,7 +190,11 @@ export const CommentItem = ({
             sx={{ flex: '1 0 0' }}
           >
             <CuAvatar sx={style.Avatar} src={comment.authorImage} />
-            <Typography color={'text.alternative'} variant={'Caption'}>
+            <Typography
+              color={'text.alternative'}
+              variant={'Caption'}
+              aria-label={'댓글 작성자'}
+            >
               {comment.authorNickname}
             </Typography>
           </Stack>
@@ -199,7 +208,7 @@ export const CommentItem = ({
           )}
         </Stack>
         {isEditMode ? (
-          <form onSubmit={handleEdit}>
+          <form onSubmit={handleEdit} name={'댓글 수정 폼'}>
             <Stack spacing={1} alignItems={'flex-end'}>
               <TextField
                 placeholder={'댓글을 작성해주세요.'}
@@ -225,7 +234,9 @@ export const CommentItem = ({
           </form>
         ) : (
           <Box sx={{ paddingRight: '2.5rem', wordBreak: 'break-all' }}>
-            <Typography variant={'Body2'}>{comment.content}</Typography>
+            <Typography variant={'Body2'} data-testid={'comment-content'}>
+              {comment.content}
+            </Typography>
             <Typography variant={'Tag'} color={'text.assistive'}>
               {dayjs(UTCtoLocalTime(comment.createAt)).format(
                 'YYYY년 MM월 DD일 hh:mm A',
@@ -245,7 +256,7 @@ export const CommentFormContainer = ({
 }: ICommentFormContainerProps) => {
   const { isPc } = useMedia()
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} name={'댓글 작성 폼'}>
       <Stack
         sx={{
           ...style.CommentForm,
@@ -261,9 +272,14 @@ export const CommentFormContainer = ({
           fullWidth
           name={'new-content'}
           id={'new-content'}
-          inputProps={{ maxLength: 150 }}
+          inputProps={{ maxLength: 150, 'aria-label': '댓글 입력창' }}
         />
-        <IconButton sx={style.IconButton} disabled={isLoading} type={'submit'}>
+        <IconButton
+          aria-label={'댓글 등록'}
+          sx={style.IconButton}
+          disabled={isLoading}
+          type={'submit'}
+        >
           <SendIcon sx={style.SendIcon} />
         </IconButton>
       </Stack>

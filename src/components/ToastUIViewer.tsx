@@ -38,6 +38,7 @@ const ToastViewer = ({
 
   return (
     <Box
+      data-testid="toast-viewer"
       sx={{
         fontSize: '0.9375rem',
         backgroundColor: 'background.secondary',

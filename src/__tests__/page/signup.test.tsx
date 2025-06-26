@@ -1,14 +1,15 @@
-import SignUp from '@/app/signup/page'
-import { render, waitFor, screen, act, fireEvent } from '@testing-library/react'
+import { render, waitFor, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { ThemeProvider } from '@mui/material'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { http, HttpResponse } from 'msw'
+import SignUp from '@/app/signup/page'
 import useAuthStore from '@/states/useAuthStore'
 import useToast from '@/states/useToast'
-import { ThemeProvider } from '@mui/material'
-import { darkTheme } from '@/constant/ColorTheme'
 import { server } from '@/mocks/server'
-import { http, HttpResponse } from 'msw'
-import API_PATH from '@/constant/apiPath'
 import { MOCK_VERIFY_CODE, MOCK_VERIFY_SEED } from '@/mocks/constants'
+import { darkTheme } from '@/constant/ColorTheme'
+import API_PATH from '@/constant/apiPath'
 import HTTP_STATUS from '@/constant/httpStatus'
 
 jest.mock('next/navigation', () => ({
@@ -143,11 +144,7 @@ describe('회원가입 페이지', () => {
         renderSignUpPage()
 
         const { email } = getFirstStepFields()
-
-        // NOTE : act로 감싸지 않으면 에러가 발생함 (When testing, code that causes React state updates should be wrapped into act(...):)
-        await act(async () => {
-          fireEvent.change(email, { target: { value: 'invalid-email' } })
-        })
+        await userEvent.type(email, 'invalid-email')
 
         // 에러 메시지가 표시되는지 확인
         const errorMessage = screen.getByText('유효한 이메일 형식이 아닙니다')
@@ -181,15 +178,11 @@ describe('회원가입 페이지', () => {
         const { sendCode, verifyCode } = getFirstStepButtons()
 
         // 이메일 입력 후 인증 코드 전송
-        await act(async () => {
-          fireEvent.change(email, { target: { value: 'test@example.com' } })
-          fireEvent.click(sendCode)
-        })
+        await userEvent.type(email, 'test@example.com')
+        await userEvent.click(sendCode)
         // 인증 코드 입력 및 인증 버튼 클릭
-        await act(async () => {
-          fireEvent.change(authCode, { target: { value: '123456' } })
-          fireEvent.click(verifyCode)
-        })
+        await userEvent.type(authCode, '123456')
+        await userEvent.click(verifyCode)
 
         expect(authCode).toBeDisabled()
         expect(mockOpenToast).toHaveBeenCalledWith({
@@ -204,15 +197,11 @@ describe('회원가입 페이지', () => {
         const { sendCode, verifyCode } = getFirstStepButtons()
 
         // 이메일 입력 후 인증 코드 전송
-        await act(async () => {
-          fireEvent.change(email, { target: { value: 'test@example.com' } })
-          fireEvent.click(sendCode)
-        })
+        await userEvent.type(email, 'test@example.com')
+        await userEvent.click(sendCode)
         // 인증 코드 입력 및 인증 버튼 클릭
-        await act(async () => {
-          fireEvent.change(authCode, { target: { value: '000000' } })
-          fireEvent.click(verifyCode)
-        })
+        await userEvent.type(authCode, '000000') // 잘못된 인증 코드 입력
+        await userEvent.click(verifyCode)
 
         expect(mockOpenToast).toHaveBeenCalledWith({
           message: expect.stringContaining('유효하지 않은 인증코드입니다'),
@@ -220,6 +209,7 @@ describe('회원가입 페이지', () => {
         })
       })
     })
+
     describe('비밀번호', () => {
       test('비밀번호가 유효한 경우 유효성 검사 항목이 모두 primary 색상으로 표시된다.', async () => {
         await renderSignUpPage()
@@ -228,22 +218,14 @@ describe('회원가입 페이지', () => {
         const { sendCode, verifyCode } = getFirstStepButtons()
 
         // 이메일 입력 후 인증 코드 전송
-        await act(async () => {
-          fireEvent.change(email, { target: { value: 'test@example.com' } })
-          fireEvent.click(sendCode)
-        })
+        await userEvent.type(email, 'test@example.com')
+        await userEvent.click(sendCode)
         // 인증 코드 입력 및 인증 버튼 클릭
-        await act(async () => {
-          fireEvent.change(authCode, { target: { value: '123456' } })
-          fireEvent.click(verifyCode)
-        })
-
-        const { password } = getFirstStepFields()
-
+        await userEvent.type(authCode, '123456')
+        await userEvent.click(verifyCode)
         // 비밀번호 입력
-        await act(async () => {
-          fireEvent.change(password, { target: { value: 'ValidPassword123!' } })
-        })
+        const { password } = getFirstStepFields()
+        await userEvent.type(password, 'ValidPassword123!')
 
         const validationItems = {
           대소문자: screen.getByText('대소문자'),
@@ -259,6 +241,7 @@ describe('회원가입 페이지', () => {
           })
         })
       })
+
       test('비밀번호가 유효하지 않은 경우 유효성 검사 항목이 assistive 색상으로 표시된다.', async () => {
         await renderSignUpPage()
 
@@ -266,17 +249,12 @@ describe('회원가입 페이지', () => {
         const { sendCode, verifyCode } = getFirstStepButtons()
 
         // 이메일 입력 후 인증 코드 전송
-        await act(async () => {
-          fireEvent.change(email, { target: { value: 'test@example.com' } })
-          fireEvent.click(sendCode)
-        })
+        await userEvent.type(email, 'test@example.com')
+        await userEvent.click(sendCode)
         // 인증 코드 입력 및 인증 버튼 클릭
-        await act(async () => {
-          fireEvent.change(authCode, { target: { value: '123456' } })
-          fireEvent.click(verifyCode)
-        })
+        await userEvent.type(authCode, '123456')
+        await userEvent.click(verifyCode)
 
-        const { password } = getFirstStepFields()
         const validationItems = {
           대소문자: screen.getByText('대소문자'),
           최소길이: screen.getByText('최소 8자'),
@@ -291,10 +269,10 @@ describe('회원가입 페이지', () => {
           })
         })
 
+        // 비밀번호 입력
+        const { password } = getFirstStepFields()
         // CASE 1: 대소문자 조건만 만족하는 경우
-        await act(async () => {
-          fireEvent.change(password, { target: { value: 'Valid' } })
-        })
+        await userEvent.type(password, 'Valid')
         expect(validationItems.대소문자).toHaveStyle({
           color: darkTheme.palette.primary.main,
         })
@@ -309,9 +287,9 @@ describe('회원가입 페이지', () => {
         })
 
         // CASE 2: 최소길이 조건도 만족하는 경우
-        await act(async () => {
-          fireEvent.change(password, { target: { value: 'ValidPassword' } })
-        })
+        await userEvent.clear(password)
+        await userEvent.type(password, 'ValidPassword')
+
         expect(validationItems.대소문자).toHaveStyle({
           color: darkTheme.palette.primary.main,
         })
@@ -326,9 +304,8 @@ describe('회원가입 페이지', () => {
         })
 
         // CASE 3: 숫자 조건도 만족하는 경우
-        await act(async () => {
-          fireEvent.change(password, { target: { value: 'ValidPassword1' } })
-        })
+        await userEvent.clear(password)
+        await userEvent.type(password, 'ValidPassword1')
         expect(validationItems.대소문자).toHaveStyle({
           color: darkTheme.palette.primary.main,
         })
@@ -343,6 +320,7 @@ describe('회원가입 페이지', () => {
         })
       })
     })
+
     describe('다음 버튼', () => {
       test('모든 입력이 유효한 경우 다음 단계로 진행된다.', async () => {
         await renderSignUpPage()
@@ -351,35 +329,28 @@ describe('회원가입 페이지', () => {
         const { sendCode, verifyCode, next } = getFirstStepButtons()
 
         // 이메일 입력 후 인증 코드 전송
-        await act(async () => {
-          fireEvent.change(email, { target: { value: 'test@example.com' } })
-          fireEvent.click(sendCode)
-        })
+        await userEvent.type(email, 'test@example.com')
+        await userEvent.click(sendCode)
         // 인증 코드 입력 및 인증 버튼 클릭
-        await act(async () => {
-          fireEvent.change(authCode, { target: { value: '123456' } })
-          fireEvent.click(verifyCode)
-        })
+        await userEvent.type(authCode, '123456')
+        await userEvent.click(verifyCode)
         // 비밀번호 입력 후 다음 버튼 클릭
-        await act(async () => {
-          fireEvent.change(password, { target: { value: 'ValidPassword1!' } })
-          fireEvent.click(next)
-        })
+        await userEvent.type(password, 'ValidPassword123!')
+        await userEvent.click(next)
 
         // 다음 단계 필드가 보이는지 확인
         const { name, nickname } = getSecondStepFields()
         expect(name).toBeInTheDocument()
         expect(nickname).toBeInTheDocument()
       })
+
       test('입력이 유효하지 않은 경우 에러가 표시된다.', async () => {
         await renderSignUpPage()
 
         const { next } = getFirstStepButtons()
 
         // 비밀번호 입력 없이 다음 버튼 클릭
-        await act(async () => {
-          fireEvent.click(next)
-        })
+        await userEvent.click(next)
 
         // 에러 메시지가 표시되는지 확인
         expect(mockOpenToast).toHaveBeenCalledWith({
@@ -389,26 +360,23 @@ describe('회원가입 페이지', () => {
       })
     })
   })
+
   describe('2단계: 이름/닉네임', () => {
     beforeEach(async () => {
       // 1단계를 모두 완료한 상태로 설정
       await renderSignUpPage()
-
       const { email, authCode, password } = getFirstStepFields()
       const { sendCode, verifyCode, next } = getFirstStepButtons()
 
-      await act(async () => {
-        fireEvent.change(email, { target: { value: 'test@example.com' } })
-        fireEvent.click(sendCode)
-      })
-      await act(async () => {
-        fireEvent.change(authCode, { target: { value: '123456' } })
-        fireEvent.click(verifyCode)
-      })
-      await act(async () => {
-        fireEvent.change(password, { target: { value: 'ValidPassword1!' } })
-        fireEvent.click(next)
-      })
+      // 이메일 입력 후 인증 코드 전송
+      await userEvent.type(email, 'test@example.com')
+      await userEvent.click(sendCode)
+      // 인증 코드 입력 및 인증 버튼 클릭
+      await userEvent.type(authCode, '123456')
+      await userEvent.click(verifyCode)
+      // 비밀번호 입력 후 다음 버튼 클릭
+      await userEvent.type(password, 'ValidPassword123!')
+      await userEvent.click(next)
     })
 
     describe('이름 입력', () => {
@@ -416,110 +384,111 @@ describe('회원가입 페이지', () => {
         const { name } = getSecondStepFields()
 
         // 유효한 이름 입력
-        await act(async () => {
-          fireEvent.change(name, { target: { value: '홍길동' } })
-        })
+        await userEvent.type(name, '홍길동')
 
         const errorMessage = screen.queryByText('한글 2 ~ 4자로 입력하세요')
         expect(errorMessage).not.toBeInTheDocument()
       })
+
       test('이름이 유효하지 않은 경우 에러 메시지가 표시된다.', async () => {
         const { name } = getSecondStepFields()
 
         // 유효하지 않은 이름 입력
-        await act(async () => {
-          fireEvent.change(name, { target: { value: '홍' } })
-        })
+        await userEvent.type(name, '홍')
 
         const errorMessage = screen.getByText('한글 2 ~ 4자로 입력하세요')
         expect(errorMessage).toBeInTheDocument()
       })
     })
+
     describe('닉네임 입력', () => {
+      beforeEach(() => {
+        jest.clearAllMocks()
+      })
+
       test('닉네임은 한글, 영문, 숫자 2~30자로 입력해야 한다.', async () => {
         const { nickname } = getSecondStepFields()
 
         // 유효한 닉네임 입력
-        await act(async () => {
-          fireEvent.change(nickname, { target: { value: '홍길동123' } })
-        })
+        await userEvent.type(nickname, '홍길동123')
 
         const errorMessage =
           screen.queryByText('닉네임은 2자 이상이어야 합니다')
         expect(errorMessage).not.toBeInTheDocument()
       })
-      test('닉네임이 유효하지 않은 경우 에러 메시지가 표시된다.', async () => {
-        const { nickname } = getSecondStepFields()
 
-        // CASE 1: 너무 짧은 닉네임
-        await act(async () => {
-          fireEvent.change(nickname, { target: { value: '홍' } })
-        })
-        let errorMessage = screen.getByText('닉네임은 2자 이상이어야 합니다')
-        expect(errorMessage).toBeInTheDocument()
+      test.each([
+        {
+          case: '너무 짧은 닉네임',
+          nickname: '홍',
+          errormessage: '닉네임은 2자 이상이어야 합니다',
+        },
+        {
+          case: '너무 긴 닉네임',
+          nickname: 'a'.repeat(31),
+          errormessage: '닉네임은 30자 이하여야 합니다',
+        },
+        {
+          case: '특수문자가 포함된 닉네임',
+          nickname: '홍길동@123',
+          errormessage: '한글, 영문, 숫자만 사용할 수 있습니다',
+        },
+        {
+          case: '빈 닉네임',
+          nickname: '',
+          errormessage: '닉네임을 입력하세요',
+        },
+      ])(
+        '닉네임이 유효하지 않은 경우 에러 메시지가 표시된다. ($case)',
+        async () => {
+          const { nickname } = getSecondStepFields()
 
-        // CASE 2: 너무 긴 닉네임
-        await act(async () => {
-          fireEvent.change(nickname, { target: { value: 'a'.repeat(31) } })
-        })
-        errorMessage = screen.getByText('닉네임은 30자 이하여야 합니다')
-        expect(errorMessage).toBeInTheDocument()
+          await userEvent.clear(nickname)
+          await userEvent.type(nickname, '홍')
+          const errorMessage =
+            screen.getByText('닉네임은 2자 이상이어야 합니다')
 
-        // CASE 3: 특수문자가 포함된 닉네임
-        await act(async () => {
-          fireEvent.change(nickname, { target: { value: '홍길동@123' } })
-        })
-        errorMessage = screen.getByText('한글, 영문, 숫자만 사용할 수 있습니다')
-        expect(errorMessage).toBeInTheDocument()
-
-        // CASE 4: 닉네임을 지운 경우
-        await act(async () => {
-          fireEvent.change(nickname, { target: { value: '' } })
-        })
-        errorMessage = screen.getByText('닉네임을 입력하세요')
-        expect(errorMessage).toBeInTheDocument()
-      })
+          expect(errorMessage).toBeInTheDocument()
+        },
+      )
     })
+
     describe('닉네임 중복 확인', () => {
       test('유효하지 않은 닉네임은 에러 토스트 메시지가 표시된다.', async () => {
         const { nickname } = getSecondStepFields()
         const { verifyNickname } = getSecondStepButtons()
 
         // 유효하지 않은 닉네임 입력
-        await act(async () => {
-          fireEvent.change(nickname, { target: { value: '홍' } })
-          fireEvent.click(verifyNickname)
-        })
+        await userEvent.type(nickname, '홍')
+        await userEvent.click(verifyNickname)
 
         expect(mockOpenToast).toHaveBeenCalledWith({
           message: expect.stringContaining('유효하지 않은 닉네임입니다'),
           severity: 'error',
         })
       })
+
       test('중복인 닉네임의 경우 에러 토스트 메시지가 표시된다.', async () => {
         const { nickname } = getSecondStepFields()
         const { verifyNickname } = getSecondStepButtons()
 
         // 중복된 닉네임 입력
-        await act(async () => {
-          fireEvent.change(nickname, { target: { value: '존재하는닉네임' } })
-          fireEvent.click(verifyNickname)
-        })
+        await userEvent.type(nickname, '존재하는닉네임')
+        await userEvent.click(verifyNickname)
 
         expect(mockOpenToast).toHaveBeenCalledWith({
           message: expect.stringContaining('이미 가입된 닉네임입니다'),
           severity: 'error',
         })
       })
+
       test('중복이 아닌 닉네임의 경우 성공 토스트 메시지가 표시된다.', async () => {
         const { nickname } = getSecondStepFields()
         const { verifyNickname } = getSecondStepButtons()
 
         // 중복되지 않은 닉네임 입력
-        await act(async () => {
-          fireEvent.change(nickname, { target: { value: '새로운닉네임' } })
-          fireEvent.click(verifyNickname)
-        })
+        await userEvent.type(nickname, '새로운닉네임')
+        await userEvent.click(verifyNickname)
 
         expect(mockOpenToast).toHaveBeenCalledWith({
           message: expect.stringContaining('닉네임이 확인되었습니다'),
@@ -527,6 +496,7 @@ describe('회원가입 페이지', () => {
         })
       })
     })
+
     describe('회원가입 완료', () => {
       beforeEach(() => {
         server.use(
@@ -550,47 +520,38 @@ describe('회원가입 페이지', () => {
         const { verifyNickname, signUp } = getSecondStepButtons()
 
         // 이름 입력
-        await act(async () => {
-          fireEvent.change(name, { target: { value: '홍길동' } })
-        })
+        await userEvent.type(name, '홍길동')
         // 닉네임 입력과 중복확인
-        await act(async () => {
-          fireEvent.change(nickname, { target: { value: '새로운닉네임' } })
-          fireEvent.click(verifyNickname)
-        })
-
+        await userEvent.type(nickname, '새로운닉네임')
+        await userEvent.click(verifyNickname)
         // 회원가입 완료 버튼 클릭
-        await act(async () => {
-          fireEvent.click(signUp)
-        })
+        await userEvent.click(signUp)
 
         // 성공한 경우 로그인 페이지로 이동
         expect(useRouter().push).toHaveBeenCalledWith('/login')
       })
+
       test('유효하지 않은 입력이 있는 경우 해당 필드로 포커스가 이동한다.', async () => {
         const { name, nickname } = getSecondStepFields()
         const { signUp } = getSecondStepButtons()
 
         // CASE 1: 아무것도 입력하지 않은 경우
-        await act(async () => {
-          fireEvent.click(signUp)
-        })
+        await userEvent.click(signUp)
+
         expect(name).toHaveFocus()
         expect(screen.getByText('이름을 입력하세요')).toBeInTheDocument()
 
         // CASE 2: 이름만 입력한 경우
-        await act(async () => {
-          fireEvent.change(name, { target: { value: '홍길동' } })
-          fireEvent.click(signUp)
-        })
+        await userEvent.type(name, '홍길동')
+        await userEvent.click(signUp)
+
         expect(nickname).toHaveFocus()
         expect(screen.getByText('닉네임을 입력하세요')).toBeInTheDocument()
 
         // CASE 3: 유효하지 않은 입력이 있는 경우
-        await act(async () => {
-          fireEvent.change(nickname, { target: { value: '홍' } })
-          fireEvent.click(signUp)
-        })
+        await userEvent.type(nickname, '홍')
+        await userEvent.click(signUp)
+
         expect(nickname).toHaveFocus()
         expect(
           screen.getByText('닉네임은 2자 이상이어야 합니다'),

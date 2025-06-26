@@ -30,6 +30,7 @@ const CuModal = ({
   // sx,
   keepMounted,
   children,
+  closeButtonLabel,
 }: ICuModalProps) => {
   const { isPc } = useMedia()
   return (
@@ -45,7 +46,11 @@ const CuModal = ({
           spacing={'1rem'}
         >
           {!isPc && mobileFullSize ? (
-            <IconButton onClick={onClose} sx={style.headerMobileButton}>
+            <IconButton
+              onClick={onClose}
+              sx={style.headerMobileButton}
+              aria-label={closeButtonLabel}
+            >
               <ChevronLeft />
             </IconButton>
           ) : (

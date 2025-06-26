@@ -7,6 +7,7 @@ import {
   RenderResult,
   fireEvent,
 } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 
@@ -77,18 +78,16 @@ describe('약관 동의 페이지', () => {
       const { allAgree, usage, privacy } = getCheckboxes()
 
       // when 1 : 전체 동의 체크박스 체크
-      await act(async () => {
-        fireEvent.click(allAgree)
-      })
+      await userEvent.click(allAgree)
+
       // then 1 : 전체 동의 체크박스가 체크되고, privacy와 usage 체크박스도 체크되어야 한다.
       expect(allAgree).toBeChecked()
       expect(privacy).toBeChecked()
       expect(usage).toBeChecked()
 
       // when 2 : 전체 동의 체크박스 체크 해제
-      await act(async () => {
-        fireEvent.click(allAgree)
-      })
+      await userEvent.click(allAgree)
+
       // then 2 : 전체 동의 체크박스가 체크 해제되고, privacy와 usage 체크박스도 체크 해제되어야 한다.
       expect(allAgree).not.toBeChecked()
       expect(privacy).not.toBeChecked()
@@ -101,10 +100,8 @@ describe('약관 동의 페이지', () => {
       const { allAgree, usage, privacy } = getCheckboxes()
 
       // when 1 : privacy, usage 체크박스만 체크
-      await act(async () => {
-        fireEvent.click(privacy)
-        fireEvent.click(usage)
-      })
+      await userEvent.click(privacy)
+      await userEvent.click(usage)
 
       // then 1 : 전체 동의 체크박스를 포함해서 모든 체크박스가 체크되어야 한다.
       expect(allAgree).toBeChecked()
@@ -112,10 +109,8 @@ describe('약관 동의 페이지', () => {
       expect(usage).toBeChecked()
 
       // when 2 : privacy와 usage 체크박스 체크 해제
-      await act(async () => {
-        fireEvent.click(privacy)
-        fireEvent.click(usage)
-      })
+      await userEvent.click(privacy)
+      await userEvent.click(usage)
 
       // then 2 : 모든 체크박스가 체크 해제되어야 한다.
       expect(allAgree).not.toBeChecked()
@@ -131,10 +126,8 @@ describe('약관 동의 페이지', () => {
       const { usage, privacy } = getCheckboxes()
 
       // when
-      await act(async () => {
-        fireEvent.click(usage)
-        fireEvent.click(privacy)
-      })
+      await userEvent.click(usage)
+      await userEvent.click(privacy)
 
       // then
       const nextButton = getNextButton()

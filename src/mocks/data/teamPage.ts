@@ -65,7 +65,7 @@ class MockPostDataStore {
     })
 
     // 일반 게시글
-    this.posts.set(mockPostIdGenerator.getNextPostId(), {
+    this.posts.set(MOCK_POST_ID, {
       type: POST_TYPE.POST,
       postId: MOCK_POST_ID,
       title: '첫번째 게시글',

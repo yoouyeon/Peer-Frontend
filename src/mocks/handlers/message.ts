@@ -104,6 +104,13 @@ export const handlers = [
         )
       }
 
+      // 검색 결과에 해당하는 사용자가 없는 경우
+      if (!MOCK_TARGET.userNickname.includes(keyword)) {
+        return HttpResponse.json([], {
+          status: HTTP_STATUS.ok,
+        })
+      }
+
       // 기존 메시지가 없는 경우에만 검색 결과 반환 (1명의 사용자만 존재)
       if (messageList.length === 0) {
         return HttpResponse.json(

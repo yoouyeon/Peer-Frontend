@@ -24,6 +24,11 @@ type SearchUserRequest = {
   keyword: string
 }
 
+type NewMessageRequest = {
+  targetId: number
+  content: string
+}
+
 const MOCK_CONVERSATION_ID = 1
 const MOCK_TARGET = {
   userId: 2,
@@ -179,6 +184,36 @@ export const handlers = [
       }
       return HttpResponse.json(conversationList, {
         status: HTTP_STATUS.ok,
+      })
+    },
+  ),
+  http.post<never, NewMessageRequest, IMessageListData[] | ErrorResponse>(
+    API_PATH.message.newMessage,
+    async ({ request }) => {
+      const validationResult = validateAccessToken(request)
+      if (!validationResult.isValid) {
+        return validationResult.response
+      }
+      const { targetId, content } = await request.json()
+      if (!targetId || !content) {
+        return HttpResponse.json(
+          { message: '대상 사용자와 내용을 입력해주세요.' },
+          { status: HTTP_STATUS.badRequest },
+        )
+      }
+      const newMessage: IMessageListData = {
+        targetId: targetId,
+        conversationId: MOCK_CONVERSATION_ID,
+        targetNickname: MOCK_TARGET.userNickname,
+        targetProfile: MOCK_TARGET.userProfile,
+        unreadMsgNumber: 1,
+        latestContent: content,
+        latestDate: new Date().toISOString(),
+        latestMsgId: messageList.length + 1, // 새로운 메시지 ID
+      }
+      messageList.push(newMessage)
+      return HttpResponse.json(messageList, {
+        status: HTTP_STATUS.created,
       })
     },
   ),

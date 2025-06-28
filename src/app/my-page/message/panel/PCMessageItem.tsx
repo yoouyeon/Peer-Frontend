@@ -23,7 +23,7 @@ export const PCMessageListItem = ({
   const { targetId, conversationId } = message
 
   return (
-    <ListItem disablePadding sx={style.listItem}>
+    <ListItem disablePadding sx={style.listItem} data-testid="message-item">
       <ListItemButton
         disableGutters
         onClick={

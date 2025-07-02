@@ -36,6 +36,7 @@ const CuModal = ({
   return (
     <Modal open={open} onClose={onClose} keepMounted={!!keepMounted}>
       <Stack
+        data-testid="modal-wrapper"
         spacing={'1.5rem'}
         sx={{ ...getModalWrapperStyle(isPc, mobileFullSize) }}
       >
@@ -74,7 +75,12 @@ const CuModal = ({
         <Stack sx={style.modalContent} justifyContent={'center'}>
           {children}
         </Stack>
-        <Stack direction={'row'} spacing={'1rem'} width={'100%'}>
+        <Stack
+          direction={'row'}
+          spacing={'1rem'}
+          width={'100%'}
+          data-testid={'modal-buttons'}
+        >
           {textButton ? (
             <CuButton
               variant={'text'}

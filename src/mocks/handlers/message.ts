@@ -30,7 +30,7 @@ type NewMessageRequest = {
 }
 
 const MOCK_CONVERSATION_ID = 1
-const MOCK_TARGET = {
+export const MOCK_TARGET = {
   userId: 2,
   userEmail: 'kimyounghee@test.com',
   userNickname: '김영희',

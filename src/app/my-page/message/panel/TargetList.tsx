@@ -36,6 +36,7 @@ const TargetItem = ({
         <Stack direction={'row'} alignItems={'center'} spacing={1}>
           <CuAvatar src={targetProfile} sx={style.avatar} />
           <ListItemText
+            data-testid={'target-list-item'}
             primary={targetNickname}
             primaryTypographyProps={{
               variant: 'Body1',

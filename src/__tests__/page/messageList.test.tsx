@@ -64,6 +64,14 @@ server.use(
   }),
 )
 
+server.use(
+  http.delete(API_PATH.message.deleteMessage, async () => {
+    return HttpResponse.json([], {
+      status: HTTP_STATUS.ok,
+    })
+  }),
+)
+
 const renderPage = async () => {
   const result = await render(
     <SWRConfig value={{ provider: () => new Map() }}>
@@ -305,12 +313,4 @@ describe('새로운 메시지 작성', () => {
       expect(screen.queryByTestId('modal-wrapper')).not.toBeInTheDocument()
     })
   })
-})
-
-describe('사용자 인터랙션', () => {
-  test('새로운 메시지를 보낼 수 있다.', async () => {})
-
-  test('메시지를 읽을 수 있다.', async () => {})
-
-  test('모바일 View에서 메시지를 밀어 삭제할 수 있다.', async () => {})
 })

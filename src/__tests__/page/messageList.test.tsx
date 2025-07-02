@@ -56,8 +56,7 @@ server.use(
 )
 
 server.use(
-  http.post(API_PATH.message.newMessage, async ({ request }) => {
-    console.log('새 쪽지 작성 요청', request.url)
+  http.post(API_PATH.message.newMessage, async () => {
     return HttpResponse.json([], {
       status: HTTP_STATUS.ok,
     })
@@ -237,7 +236,7 @@ describe('새로운 메시지 작성', () => {
   })
 
   test('쪽지를 보낼 수 있다.', async () => {
-    const axiosPostSpy = jest.spyOn(axios.Axios.prototype, 'post')
+    // const axiosPostSpy = jest.spyOn(axios.Axios.prototype, 'post')
 
     // 새 쪽지 모달이 열려있는지 확인
     await waitFor(() => {
@@ -301,7 +300,6 @@ describe('새로운 메시지 작성', () => {
       name: '보내기',
     })
     await userEvent.click(confirmSendButton)
-    console.log('axiosPostSpy.mock.calls:', axiosPostSpy.mock.calls)
     await waitFor(() => {
       // expect(axiosPostSpy).toHaveBeenLastCalledWith(
       //   API_PATH.message.newMessage,

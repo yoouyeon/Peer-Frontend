@@ -92,7 +92,7 @@ const MessageChatPage = () => {
       .finally(() => {
         setIsLoading(false)
       })
-  }, [targetId, conversationId, goToMessageList])
+  }, [targetId, conversationId])
 
   useEffect(() => {
     if (!data) return

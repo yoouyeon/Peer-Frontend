@@ -3,11 +3,13 @@ import API_PATH from '@/constant/apiPath'
 import HTTP_STATUS from '@/constant/httpStatus'
 import {
   IConversationList,
+  IMessage,
   IMessageListData,
   IMessageTarget,
 } from '@/types/IMessage'
 import { ErrorResponse } from '../types'
 import { validateAccessToken } from '../utils'
+import { MOCK_USER_PROFILE } from '../constants'
 
 type ConversationListRequest = {
   targetId: number
@@ -24,12 +26,12 @@ type SearchUserRequest = {
   keyword: string
 }
 
-type NewMessageRequest = {
+type MessageRequest = {
   targetId: number
   content: string
 }
 
-const MOCK_CONVERSATION_ID = 1
+export const MOCK_CONVERSATION_ID = 1
 export const MOCK_TARGET = {
   userId: 2,
   userEmail: 'kimyounghee@test.com',
@@ -50,6 +52,30 @@ let messageList: IMessageListData[] = [
     latestMsgId: 1,
   },
 ]
+
+const messageMap = new Map<number, IConversationList>()
+messageMap.set(MOCK_TARGET.userId, {
+  msgOwner: {
+    userId: MOCK_USER_PROFILE.id,
+    userNickname: MOCK_USER_PROFILE.nickname,
+    userProfile: '',
+  },
+  msgTarget: {
+    userId: MOCK_TARGET.userId,
+    userNickname: MOCK_TARGET.userNickname,
+    userProfile: MOCK_TARGET.userProfile,
+    deleted: MOCK_TARGET.deleted,
+  },
+  msgList: [
+    {
+      userId: MOCK_TARGET.userId,
+      msgId: 1,
+      content: '안녕하세요',
+      date: '2025-05-10',
+      isEnd: true,
+    },
+  ],
+})
 
 export const handlers = [
   http.get<never, never, IMessageListData[] | ErrorResponse>(
@@ -187,7 +213,7 @@ export const handlers = [
       })
     },
   ),
-  http.post<never, NewMessageRequest, IMessageListData[] | ErrorResponse>(
+  http.post<never, MessageRequest, IMessageListData[] | ErrorResponse>(
     API_PATH.message.newMessage,
     async ({ request }) => {
       const validationResult = validateAccessToken(request)
@@ -213,6 +239,45 @@ export const handlers = [
       }
       messageList.push(newMessage)
       return HttpResponse.json(messageList, {
+        status: HTTP_STATUS.created,
+      })
+    },
+  ),
+  http.post<never, MessageRequest, IMessage | ErrorResponse>(
+    API_PATH.message.backMessage,
+    async ({ request }) => {
+      const validationResult = validateAccessToken(request)
+      if (!validationResult.isValid) {
+        return validationResult.response
+      }
+      const { targetId, content } = await request.json()
+      if (!targetId || !content) {
+        return HttpResponse.json(
+          { message: '대상 사용자와 내용을 입력해주세요.' },
+          { status: HTTP_STATUS.badRequest },
+        )
+      }
+      const messages = messageMap.get(targetId)
+      if (!messages) {
+        return HttpResponse.json(
+          { message: '쪽지가 존재하지 않습니다.' },
+          { status: HTTP_STATUS.notFound },
+        )
+      }
+      const newMessage: IMessage = {
+        userId: MOCK_USER_PROFILE.id,
+        msgId: messages.msgList.length + 1, // 새로운 메시지 ID
+        content,
+        date: new Date().toISOString(),
+        isEnd: true,
+      }
+      // 기존 메시지 목록의 가장 마지막 메시지의 isEnd 값을 false로 변경
+      if (messages.msgList.length > 0) {
+        messages.msgList[messages.msgList.length - 1].isEnd = false
+      }
+      messages.msgList.push(newMessage)
+      messageMap.set(targetId, messages)
+      return HttpResponse.json(newMessage, {
         status: HTTP_STATUS.created,
       })
     },

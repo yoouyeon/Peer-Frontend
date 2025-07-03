@@ -15,6 +15,7 @@ import useToast from '@/states/useToast'
 import SendIcon from '@/icons/SendIcon'
 import { IMessage, IMessageTargetUser } from '@/types/IMessage'
 import * as style from './MessageForm.style'
+import API_PATH from '@/constant/apiPath'
 
 const MAX_LENGTH = 300
 
@@ -72,7 +73,7 @@ const MessageForm = ({
         content,
       }
       const response = await axiosWithAuth.post(
-        `/api/v1/message/back-message`,
+        API_PATH.message.backMessage,
         messageData,
       )
       if (response.status === 201) {
@@ -128,6 +129,7 @@ const MessageForm = ({
               <BorderlessTextField
                 fullWidth
                 id="message"
+                aria-label="쪽지 내용 입력"
                 multiline
                 value={content}
                 placeholder={
@@ -152,6 +154,7 @@ const MessageForm = ({
               disabled={messageSendState.isMessageSending || disabled}
               type="submit"
               sx={style.pcSendButton}
+              aria-label="보내기"
             >
               <SendIcon />
             </IconButton>
@@ -165,6 +168,7 @@ const MessageForm = ({
             variant="outlined"
             onChange={(e) => setContent(e.target.value.slice(0, MAX_LENGTH))}
             onKeyDown={handleKeyDown}
+            aria-label="쪽지 내용 입력"
           />
         )}
       </form>

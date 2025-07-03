@@ -29,6 +29,7 @@ const API_PATH = {
     searching: `${BASE_URL}/api/v1/message/searching`,
     conversationList: `${BASE_URL}/api/v1/message/conversation-list`,
     newMessage: `${BASE_URL}/api/v1/message/new-message`,
+    backMessage: `${BASE_URL}/api/v1/message/back-message`,
   },
   myPortfolio: {
     list: `${BASE_URL}/api/v1/myPortfolio/list`,

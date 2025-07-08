@@ -17,9 +17,6 @@ import API_PATH from '@/constant/apiPath'
 import HTTP_STATUS from '@/constant/httpStatus'
 import MuiThemeProvider from '@/app/panel/MuiThemeProvider'
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}))
 jest.mock('@/states/useAuthStore', () => ({
   getState: () => ({
     accessToken: MOCK_ACCESS_TOKEN,

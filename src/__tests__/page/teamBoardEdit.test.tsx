@@ -1,5 +1,5 @@
-import { forwardRef, Suspense, useEffect } from 'react'
-import { screen, render, waitFor, act, within } from '@testing-library/react'
+import { Suspense } from 'react'
+import { screen, render, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import axios from 'axios'
 import { http, HttpResponse } from 'msw'
@@ -12,9 +12,6 @@ import API_PATH from '@/constant/apiPath'
 import { server } from '@/mocks/server'
 import HTTP_STATUS from '@/constant/httpStatus'
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}))
 jest.mock('@/states/useAuthStore', () => ({
   getState: () => ({
     accessToken: MOCK_ACCESS_TOKEN,

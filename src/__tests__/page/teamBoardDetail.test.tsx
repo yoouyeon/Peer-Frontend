@@ -18,9 +18,6 @@ import API_PATH from '@/constant/apiPath'
 import HTTP_STATUS from '@/constant/httpStatus'
 import MuiThemeProvider from '@/app/panel/MuiThemeProvider'
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}))
 jest.mock('@/components/ToastUIViewer', () => ({
   __esModule: true,
   default: ({ initialValue }: { initialValue: string }) => (
@@ -154,7 +151,7 @@ describe('상호작용 테스트', () => {
     })
     await userEvent.click(confirmButton)
 
-    const confirmModal = await waitFor(() => {
+    await waitFor(() => {
       expect(useTeamPageState.getState().boardType).toBe('LIST')
       expect(useTeamPageState.getState().postId).toBeUndefined()
     })

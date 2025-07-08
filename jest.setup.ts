@@ -13,6 +13,12 @@ if (!global.crypto.randomUUID) {
   global.crypto.randomUUID = () => randomUUID()
 }
 
+// next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
+}))
+
 beforeAll(() => {
   // 테스트 시작 전 MSW 서버 시작
   server.listen()

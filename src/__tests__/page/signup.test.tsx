@@ -12,10 +12,6 @@ import { darkTheme } from '@/constant/ColorTheme'
 import API_PATH from '@/constant/apiPath'
 import HTTP_STATUS from '@/constant/httpStatus'
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-  useSearchParams: jest.fn(),
-}))
 jest.mock('@/states/useAuthStore')
 jest.mock('@/states/useToast')
 jest.mock('@/api/jwtToken', () => ({

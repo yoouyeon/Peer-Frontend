@@ -17,9 +17,6 @@ import { server } from '@/mocks/server'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/constants'
 import useTeamPageState from '@/states/useTeamPageState'
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}))
 // 로그인 상태로 테스트하기 위해 useAuthStore를 모킹
 jest.mock('@/states/useAuthStore', () => ({
   __esModule: true,

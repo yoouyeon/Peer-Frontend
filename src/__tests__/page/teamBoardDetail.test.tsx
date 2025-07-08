@@ -79,10 +79,10 @@ describe('게시글 상세 내용 페칭', () => {
     const commentItems = await screen.findAllByTestId('comment-item')
     const commentItem = commentItems[0]
     const commentAuthor = within(commentItem).getByLabelText('댓글 작성자')
-    const commentConet = within(commentItem).getByTestId('comment-content')
+    const commentContent = within(commentItem).getByTestId('comment-content')
 
     expect(commentAuthor).toHaveTextContent('김개발')
-    expect(commentConet).toHaveTextContent('자유롭게 의견을 남겨주세요!')
+    expect(commentContent).toHaveTextContent('자유롭게 의견을 남겨주세요!')
   })
 })
 
@@ -142,11 +142,11 @@ describe('상호작용 테스트', () => {
     await userEvent.click(deleteButton)
 
     // 삭제 확인 모달 열림
-    const comfirmModalButtons = (
+    const confirmModalButtons = (
       await screen.findAllByTestId('modal-buttons')
     ).find((el) => within(el).queryByRole('button', { name: '삭제' })) // modal-buttons 요소가 1개 이상 등장하기 때문에 삭제 버튼을 가지고 있는 것만 찾아낸다.
-    expect(comfirmModalButtons).toBeDefined()
-    const confirmButton = within(comfirmModalButtons!).getByRole('button', {
+    expect(confirmModalButtons).toBeDefined()
+    const confirmButton = within(confirmModalButtons!).getByRole('button', {
       name: '삭제',
     })
     await userEvent.click(confirmButton)

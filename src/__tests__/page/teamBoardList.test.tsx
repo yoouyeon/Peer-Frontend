@@ -16,6 +16,7 @@ import {
 import { server } from '@/mocks/server'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/constants'
 import useTeamPageState from '@/states/useTeamPageState'
+import { BASE_POST_COUNT } from '@/constant/teamBoard'
 
 // 로그인 상태로 테스트하기 위해 useAuthStore를 모킹
 jest.mock('@/states/useAuthStore', () => ({
@@ -106,7 +107,6 @@ describe('게시판 데이터 페칭', () => {
 })
 
 describe('게시글 목록 페칭', () => {
-  const BASE_POST_COUNT = 10
   beforeAll(() => {
     // mock 게시글을 10개 추가
     mockPostDataStore.addMockPost(BASE_POST_COUNT, POST_TYPE.POST)

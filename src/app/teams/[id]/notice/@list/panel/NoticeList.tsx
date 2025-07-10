@@ -12,6 +12,7 @@ import { useInfiniteSWRScroll } from '@/hook/useInfiniteScroll'
 import useTeamPageState from '@/states/useTeamPageState'
 import { ITeamNotice } from '@/types/TeamBoardTypes'
 import API_PATH from '@/constant/apiPath'
+import { BASE_POST_COUNT } from '@/constant/teamBoard'
 
 const NoticeList = ({
   teamId,
@@ -24,7 +25,7 @@ const NoticeList = ({
   const { setNotice } = useTeamPageState()
   const { data, error, isLoading, size, setSize, targetRef } =
     useInfiniteSWRScroll(
-      `${API_PATH.teamPage.notice}/${teamId}?keyword=${keyword}&pageSize=${10}`,
+      `${API_PATH.teamPage.notice}/${teamId}?keyword=${keyword}&pageSize=${BASE_POST_COUNT}`,
       (url: string) => axiosWithAuth.get(url).then((res) => res.data),
     )
   const router = useRouter()

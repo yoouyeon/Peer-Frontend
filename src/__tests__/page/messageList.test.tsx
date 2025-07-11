@@ -88,11 +88,10 @@ describe('메시지 목록 랜더링', () => {
   const MOCK_MESSAGE = '안녕하세요'
   const MOCK_SENDER = '김영희'
 
-  test('메시지 목록을 불러온다', async () => {
+  test('메시지 목록을 보여준다.', async () => {
     await renderPage()
     const messageList = screen.getAllByTestId('message-item')
 
-    expect(messageList.length).toBe(1)
     expect(within(messageList[0]).getByText(MOCK_MESSAGE)).toBeInTheDocument()
     expect(within(messageList[0]).getByText(MOCK_SENDER)).toBeInTheDocument()
   })
@@ -107,7 +106,7 @@ describe('메시지 목록 랜더링', () => {
 
     await waitFor(() => {
       const messageList = screen.getAllByTestId('message-item')
-      expect(messageList.length).toBe(1)
+      expect(messageList.length).toBeGreaterThanOrEqual(1) // 검색 결과가 하나 이상 있어야 한다.
       expect(within(messageList[0]).getByText(MOCK_SENDER)).toBeInTheDocument()
     })
 

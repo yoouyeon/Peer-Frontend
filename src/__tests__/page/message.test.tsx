@@ -51,8 +51,30 @@ window.IntersectionObserver = jest.fn(() => {
 window.alert = jest.fn()
 
 const mockUseMedia = useMedia as jest.MockedFunction<typeof useMedia>
+const mockAsPc = () => {
+  mockUseMedia.mockReturnValue({
+    isPc: true,
+    isTablet: false,
+    isLargeTablet: false,
+    isOverTablet: false,
+  })
+}
 
-const renderPage = async () => {
+const mockAsMobile = () => {
+  mockUseMedia.mockReturnValue({
+    isPc: false,
+    isTablet: false,
+    isLargeTablet: false,
+    isOverTablet: false,
+  })
+}
+
+const renderPage = async (type: 'PC' | 'MOBILE' = 'MOBILE') => {
+  if (type === 'PC') {
+    mockAsPc()
+  } else {
+    mockAsMobile()
+  }
   const result = await act(async () => {
     return render(
       <MuiThemeProvider>
@@ -64,24 +86,6 @@ const renderPage = async () => {
 }
 
 describe('쪽지 페이지', () => {
-  const mockAsPc = () => {
-    mockUseMedia.mockReturnValue({
-      isPc: true,
-      isTablet: false,
-      isLargeTablet: false,
-      isOverTablet: false,
-    })
-  }
-
-  const mockAsMobile = () => {
-    mockUseMedia.mockReturnValue({
-      isPc: false,
-      isTablet: false,
-      isLargeTablet: false,
-      isOverTablet: false,
-    })
-  }
-
   const axiosPostSpy = jest.spyOn(axios.Axios.prototype, 'post')
 
   beforeEach(() => {
@@ -102,8 +106,7 @@ describe('쪽지 페이지', () => {
   })
 
   test('PC 화면에서 쪽지를 보낼 수 있다.', async () => {
-    mockAsPc()
-    await renderPage()
+    await renderPage('PC')
     // 랜더링 대기
     await waitFor(() => {
       expect(screen.getByText(MOCK_TARGET.userNickname)).toBeInTheDocument()
@@ -132,8 +135,7 @@ describe('쪽지 페이지', () => {
   })
 
   test('모바일 화면에서 쪽지를 보낼 수 있다.', async () => {
-    mockAsMobile()
-    await renderPage()
+    await renderPage('MOBILE')
     // 랜더링 대기
     await waitFor(() => {
       expect(screen.getByText(MOCK_TARGET.userNickname)).toBeInTheDocument()

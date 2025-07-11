@@ -7,8 +7,9 @@ import { SWRConfig } from 'swr'
 import TeamNoticeView from '@/app/teams/[id]/notice/@detail/page'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/constants'
 import {
-  MOCK_NOTICE_COMMENT_ID,
-  MOCK_NOTICE_ID,
+  MOCK_NOTICE,
+  MOCK_NOTICE_COMMENT,
+  MOCK_POST,
   MOCK_TEAM_ID,
 } from '@/mocks/data/teamPage'
 import useTeamPageState from '@/states/useTeamPageState'
@@ -54,7 +55,7 @@ const renderPage = async () => {
 describe('데이터 페칭 테스트', () => {
   beforeEach(async () => {
     await act(async () => {
-      useTeamPageState.setState({ postId: MOCK_NOTICE_ID })
+      useTeamPageState.setState({ postId: MOCK_NOTICE.postId })
     })
   })
 
@@ -63,14 +64,12 @@ describe('데이터 페칭 테스트', () => {
 
     await waitFor(() => {
       // 제목
-      expect(screen.getByLabelText('제목')).toHaveTextContent('첫번째 공지사항')
+      expect(screen.getByLabelText('제목')).toHaveTextContent(MOCK_NOTICE.title)
       // 내용
-      expect(
-        screen.getByText(
-          '다들 안녕하세요! 앞으로 이곳에 스터디 공지사항을 올릴 예정입니다.',
-        ),
-      ).toBeInTheDocument()
-      expect(screen.getByLabelText('작성자')).toHaveTextContent('김개발')
+      expect(screen.getByText(MOCK_NOTICE.content)).toBeInTheDocument()
+      expect(screen.getByLabelText('작성자')).toHaveTextContent(
+        MOCK_NOTICE.nickname,
+      )
     })
   })
 
@@ -80,9 +79,11 @@ describe('데이터 페칭 테스트', () => {
     await waitFor(() => {
       // 작성자
       const commentAuthors = screen.getAllByLabelText('댓글 작성자')
-      expect(commentAuthors[0]).toHaveTextContent('김개발')
+      expect(commentAuthors[0]).toHaveTextContent(
+        MOCK_NOTICE_COMMENT.authorNickname,
+      )
       // 댓글 내용
-      expect(screen.getByText('모두들 화이팅!')).toBeInTheDocument()
+      expect(screen.getByText(MOCK_NOTICE_COMMENT.content)).toBeInTheDocument()
     })
   })
 })
@@ -92,20 +93,14 @@ describe('상호작용 테스트', () => {
     server.resetHandlers()
 
     await act(async () => {
-      useTeamPageState.setState({ postId: MOCK_NOTICE_ID })
+      useTeamPageState.setState({ postId: MOCK_NOTICE.postId })
     })
 
     server.use(
       http.get(`${API_PATH.teamPage.post}/:postId`, () => {
         return HttpResponse.json(
           {
-            postId: MOCK_NOTICE_ID,
-            title: '두번째 공지사항',
-            nickname: '김개발',
-            hit: 100,
-            date: new Date(),
-            content:
-              '다들 안녕하세요! 앞으로 이곳에 스터디 공지사항을 올릴 예정입니다.',
+            ...MOCK_POST,
             isAuthor: true, // 수정, 삭제 버튼 활성화를 위한 목데이터
           },
           { status: HTTP_STATUS.ok },
@@ -137,7 +132,7 @@ describe('상호작용 테스트', () => {
 
     await waitFor(() => {
       expect(useTeamPageState.getState().boardType).toBe('EDIT')
-      expect(useTeamPageState.getState().postId).toBe(MOCK_NOTICE_ID)
+      expect(useTeamPageState.getState().postId).toBe(MOCK_NOTICE.postId)
     })
   })
 
@@ -168,12 +163,7 @@ describe('댓글 기능 테스트', () => {
         return HttpResponse.json(
           [
             {
-              commentId: MOCK_NOTICE_COMMENT_ID,
-              authorImage: '',
-              authorNickname: '김개발',
-              content: '모두들 화이팅!',
-              createAt: new Date(),
-              authorId: 1,
+              ...MOCK_NOTICE_COMMENT,
               isAuthor: true, // 수정, 삭제 버튼 활성화를 위한 목데이터
             },
           ],
@@ -185,7 +175,7 @@ describe('댓글 기능 테스트', () => {
 
   beforeEach(async () => {
     await act(async () => {
-      useTeamPageState.setState({ postId: MOCK_NOTICE_ID })
+      useTeamPageState.setState({ postId: MOCK_NOTICE.postId })
     })
   })
 
@@ -230,7 +220,7 @@ describe('댓글 기능 테스트', () => {
       `${API_PATH.team.comment}`,
       expect.objectContaining({
         teamId: MOCK_TEAM_ID,
-        postId: MOCK_NOTICE_ID,
+        postId: MOCK_NOTICE.postId,
         content: COMMENT_CONTENT,
       }),
     )
@@ -266,7 +256,7 @@ describe('댓글 기능 테스트', () => {
     await userEvent.click(commentEditButton)
 
     expect(axiosPutSpy).toHaveBeenCalledWith(
-      `${API_PATH.team.comment}/${MOCK_NOTICE_COMMENT_ID}`,
+      `${API_PATH.team.comment}/${MOCK_NOTICE_COMMENT.commentId}`,
       expect.objectContaining({
         content: COMMENT_CONTENT,
       }),
@@ -296,7 +286,7 @@ describe('댓글 기능 테스트', () => {
     await userEvent.click(confirmButton)
 
     expect(axiosDeleteSpy).toHaveBeenCalledWith(
-      `${API_PATH.team.comment}/${MOCK_NOTICE_COMMENT_ID}`,
+      `${API_PATH.team.comment}/${MOCK_NOTICE_COMMENT.commentId}`,
     )
   })
 })

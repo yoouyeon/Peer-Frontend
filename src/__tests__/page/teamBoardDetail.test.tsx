@@ -8,8 +8,8 @@ import TeamBoardPostView from '@/app/teams/[id]/board/@detail/page'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/constants'
 import {
   MOCK_BOARD_ID,
-  MOCK_POST_COMMENT_ID,
-  MOCK_POST_ID,
+  MOCK_POST_COMMENT,
+  MOCK_POST,
   MOCK_TEAM_ID,
 } from '@/mocks/data/teamPage'
 import useTeamPageState from '@/states/useTeamPageState'
@@ -55,7 +55,7 @@ describe('게시글 상세 내용 페칭', () => {
   beforeEach(async () => {
     await act(async () => {
       useTeamPageState.setState({
-        postId: MOCK_POST_ID,
+        postId: MOCK_POST.postId,
         boardId: MOCK_BOARD_ID,
       })
     })
@@ -68,9 +68,9 @@ describe('게시글 상세 내용 페칭', () => {
     const content = await screen.findByTestId('toast-viewer')
     const author = await screen.findByLabelText('작성자')
 
-    expect(title).toHaveTextContent('첫번째 게시글')
-    expect(content).toHaveTextContent(/^안녕하세요!/)
-    expect(author).toHaveTextContent('김개발')
+    expect(title).toHaveTextContent(MOCK_POST.title)
+    expect(content).toHaveTextContent(MOCK_POST.content)
+    expect(author).toHaveTextContent(MOCK_POST.nickname)
   })
 
   test('게시글에 해당하는 댓글을 정상적으로 보여준다.', async () => {
@@ -81,8 +81,8 @@ describe('게시글 상세 내용 페칭', () => {
     const commentAuthor = within(commentItem).getByLabelText('댓글 작성자')
     const commentContent = within(commentItem).getByTestId('comment-content')
 
-    expect(commentAuthor).toHaveTextContent('김개발')
-    expect(commentContent).toHaveTextContent('자유롭게 의견을 남겨주세요!')
+    expect(commentAuthor).toHaveTextContent(MOCK_POST_COMMENT.authorNickname)
+    expect(commentContent).toHaveTextContent(MOCK_POST_COMMENT.content)
   })
 })
 
@@ -90,21 +90,16 @@ describe('상호작용 테스트', () => {
   beforeEach(async () => {
     await act(async () => {
       useTeamPageState.setState({
-        postId: MOCK_POST_ID,
+        postId: MOCK_POST.postId,
         boardId: MOCK_BOARD_ID,
       })
     })
 
     server.use(
-      http.get(`${API_PATH.teamPage.post}/${MOCK_POST_ID}`, () =>
+      http.get(`${API_PATH.teamPage.post}/${MOCK_POST.postId}`, () =>
         HttpResponse.json(
           {
-            postId: MOCK_POST_ID,
-            title: '첫번째 게시글',
-            nickname: '김개발',
-            hit: 100,
-            date: new Date(),
-            content: '안녕하세요!',
+            ...MOCK_POST,
             isAuthor: true, // 수정, 삭제 버튼 활성화를 위한 목데이터
           },
           { status: HTTP_STATUS.ok },
@@ -132,7 +127,7 @@ describe('상호작용 테스트', () => {
 
     await waitFor(() => {
       expect(useTeamPageState.getState().boardType).toBe('EDIT')
-      expect(useTeamPageState.getState().postId).toBe(MOCK_POST_ID)
+      expect(useTeamPageState.getState().postId).toBe(MOCK_POST.postId)
     })
   })
 
@@ -161,16 +156,11 @@ describe('상호작용 테스트', () => {
 describe('댓글 기능 테스트', () => {
   beforeAll(() => {
     server.use(
-      http.get(`${API_PATH.team.comment}/${MOCK_POST_ID}`, () => {
+      http.get(`${API_PATH.team.comment}/${MOCK_POST.postId}`, () => {
         return HttpResponse.json(
           [
             {
-              commentId: MOCK_POST_COMMENT_ID,
-              authorImage: '',
-              authorNickname: '김개발',
-              content: '모두들 화이팅!',
-              createAt: new Date(),
-              authorId: 1,
+              ...MOCK_POST_COMMENT,
               isAuthor: true, // 수정, 삭제 버튼 활성화를 위한 목데이터
             },
           ],
@@ -183,7 +173,7 @@ describe('댓글 기능 테스트', () => {
   beforeEach(async () => {
     await act(async () => {
       useTeamPageState.setState({
-        postId: MOCK_POST_ID,
+        postId: MOCK_POST.postId,
         boardId: MOCK_BOARD_ID,
       })
     })
@@ -204,8 +194,8 @@ describe('댓글 기능 테스트', () => {
     const commentItem = commentItems[0]
     const commentAuthor = within(commentItem).getByLabelText('댓글 작성자')
     const commentContent = within(commentItem).getByTestId('comment-content')
-    expect(commentAuthor).toHaveTextContent('김개발')
-    expect(commentContent).toHaveTextContent('모두들 화이팅!')
+    expect(commentAuthor).toHaveTextContent(MOCK_POST_COMMENT.authorNickname)
+    expect(commentContent).toHaveTextContent(MOCK_POST_COMMENT.content)
   })
 
   test('댓글을 등록할 수 있다.', async () => {
@@ -232,7 +222,7 @@ describe('댓글 기능 테스트', () => {
       `${API_PATH.team.comment}`,
       expect.objectContaining({
         teamId: MOCK_TEAM_ID,
-        postId: MOCK_POST_ID,
+        postId: MOCK_POST.postId,
         content: COMMENT_CONTENT,
       }),
     )
@@ -269,7 +259,7 @@ describe('댓글 기능 테스트', () => {
     await userEvent.click(commentEditButton)
 
     expect(axiosPutSpy).toHaveBeenCalledWith(
-      `${API_PATH.team.comment}/${MOCK_POST_COMMENT_ID}`,
+      `${API_PATH.team.comment}/${MOCK_POST_COMMENT.commentId}`,
       expect.objectContaining({
         content: COMMENT_CONTENT,
       }),
@@ -301,7 +291,7 @@ describe('댓글 기능 테스트', () => {
     await userEvent.click(confirmButton)
 
     expect(axiosDeleteSpy).toHaveBeenCalledWith(
-      `${API_PATH.team.comment}/${MOCK_POST_COMMENT_ID}`,
+      `${API_PATH.team.comment}/${MOCK_POST_COMMENT.commentId}`,
     )
   })
 })

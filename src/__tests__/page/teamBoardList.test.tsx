@@ -8,7 +8,7 @@ import TeamBoard from '@/app/teams/[id]/board/@list/page'
 import API_PATH from '@/constant/apiPath'
 import {
   MOCK_BOARD_ID,
-  MOCK_POST_ID,
+  MOCK_POST,
   MOCK_TEAM_ID,
   mockPostDataStore,
   POST_TYPE,
@@ -200,7 +200,7 @@ describe('사용자 인터랙션', () => {
     expect(setBoardSpy).toHaveBeenLastCalledWith(
       'DETAIL',
       MOCK_BOARD_ID,
-      MOCK_POST_ID,
+      MOCK_POST.postId,
     )
     expect(useTeamPageState.getState().boardType).toBe('DETAIL')
   })

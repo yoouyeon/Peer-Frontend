@@ -11,9 +11,6 @@ import HTTP_STATUS from '@/constant/httpStatus'
 import { server } from '@/mocks/server'
 import { MOCK_TARGET } from '@/mocks/handlers/message'
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}))
 jest.mock('@/states/useAuthStore', () => ({
   getState: () => ({
     accessToken: MOCK_ACCESS_TOKEN,

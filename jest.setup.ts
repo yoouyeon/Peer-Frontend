@@ -4,6 +4,13 @@ import { server } from '@/mocks/server'
 
 global.React = React
 
+// next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
+  useParams: jest.fn(),
+}))
+
 beforeAll(() => {
   // 테스트 시작 전 MSW 서버 시작
   server.listen()

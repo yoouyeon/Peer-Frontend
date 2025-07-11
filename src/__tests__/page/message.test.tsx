@@ -1,11 +1,12 @@
+import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor, act, within } from '@testing-library/react'
+import { useParams } from 'next/navigation'
+import axios from 'axios'
 import MessageChatPage from '@/app/my-page/message/[conversationId]/page'
 import MuiThemeProvider from '@/app/panel/MuiThemeProvider'
 import { MOCK_CONVERSATION_ID, MOCK_TARGET } from '@/mocks/handlers/message'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/constants'
 import useMedia from '@/hook/useMedia'
-import userEvent from '@testing-library/user-event'
-import axios from 'axios'
 import API_PATH from '@/constant/apiPath'
 
 jest.mock('@/hook/useMedia', () => ({
@@ -16,16 +17,6 @@ jest.mock('@/hook/useMedia', () => ({
     isLargeTablet: false,
     isOverTablet: false,
     isMobile: true,
-  })),
-}))
-
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-  })),
-  useParams: jest.fn(() => ({
-    conversationId: MOCK_CONVERSATION_ID.toString(),
   })),
 }))
 
@@ -94,8 +85,11 @@ describe('쪽지 페이지', () => {
   const axiosPostSpy = jest.spyOn(axios.Axios.prototype, 'post')
 
   beforeEach(() => {
-    Element.prototype.scrollTo = jest.fn()
     jest.clearAllMocks()
+    Element.prototype.scrollTo = jest.fn()
+    ;(useParams as jest.Mock).mockReturnValue({
+      conversationId: MOCK_CONVERSATION_ID.toString(),
+    })
   })
 
   test('targetId와 converstationId에 해당하는 쪽지 데이터를 보여준다.', async () => {

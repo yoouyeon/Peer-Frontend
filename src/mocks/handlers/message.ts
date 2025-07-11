@@ -40,18 +40,18 @@ export const MOCK_TARGET = {
   deleted: false,
 } as const
 
-let messageList: IMessageListData[] = [
-  {
-    targetId: MOCK_TARGET.userId,
-    conversationId: MOCK_CONVERSATION_ID,
-    targetNickname: MOCK_TARGET.userNickname,
-    targetProfile: MOCK_TARGET.userProfile,
-    unreadMsgNumber: 1,
-    latestContent: '안녕하세요',
-    latestDate: '2025-05-10',
-    latestMsgId: 1,
-  },
-]
+export const MOCK_MESSAGE: IMessageListData = {
+  targetId: MOCK_TARGET.userId,
+  conversationId: MOCK_CONVERSATION_ID,
+  targetNickname: MOCK_TARGET.userNickname,
+  targetProfile: MOCK_TARGET.userProfile,
+  unreadMsgNumber: 1,
+  latestContent: '안녕하세요',
+  latestDate: '2025-05-10',
+  latestMsgId: 1,
+} as const
+
+let messageList: IMessageListData[] = [MOCK_MESSAGE]
 
 const messageMap = new Map<number, IConversationList>()
 messageMap.set(MOCK_TARGET.userId, {
@@ -69,9 +69,9 @@ messageMap.set(MOCK_TARGET.userId, {
   msgList: [
     {
       userId: MOCK_TARGET.userId,
-      msgId: 1,
-      content: '안녕하세요',
-      date: '2025-05-10',
+      msgId: MOCK_MESSAGE.latestMsgId,
+      content: MOCK_MESSAGE.latestContent,
+      date: MOCK_MESSAGE.latestDate,
       isEnd: true,
     },
   ],
@@ -174,10 +174,12 @@ export const handlers = [
       }
 
       const { targetId, conversationId } = await request.json()
+      const messages = messageMap.get(targetId)
       if (
         !(
           targetId === MOCK_TARGET.userId &&
-          conversationId === MOCK_CONVERSATION_ID
+          conversationId === MOCK_CONVERSATION_ID &&
+          messages
         )
       ) {
         return HttpResponse.json(
@@ -186,29 +188,7 @@ export const handlers = [
         )
       }
 
-      const conversationList: IConversationList = {
-        msgOwner: {
-          userId: 1,
-          userNickname: '길동홍',
-          userProfile: '',
-        },
-        msgTarget: {
-          userId: MOCK_TARGET.userId,
-          userNickname: MOCK_TARGET.userNickname,
-          userProfile: MOCK_TARGET.userProfile,
-          deleted: MOCK_TARGET.deleted,
-        },
-        msgList: [
-          {
-            userId: 2,
-            msgId: 1,
-            content: '안녕하세요',
-            date: '2025-05-10',
-            isEnd: true,
-          },
-        ],
-      }
-      return HttpResponse.json(conversationList, {
+      return HttpResponse.json(messages, {
         status: HTTP_STATUS.ok,
       })
     },

@@ -116,7 +116,7 @@ describe('쪽지 페이지', () => {
     })
 
     // 쪽지 입력
-    const messageContent = '반가워요'
+    const messageContent = '반가워요 (PC)'
     const messageInput = await screen.findByPlaceholderText('내용을 입력하세요')
     await userEvent.type(messageInput, messageContent)
     // 쪽지 보내기 버튼 클릭
@@ -156,7 +156,7 @@ describe('쪽지 페이지', () => {
     const sendButton = within(modalButtons).getByRole('button', {
       name: '보내기',
     })
-    const messageContent = '반가워요'
+    const messageContent = '반가워요 (모바일)'
     await userEvent.type(messageInput, messageContent)
     // 쪽지 보내기
     await act(async () => {

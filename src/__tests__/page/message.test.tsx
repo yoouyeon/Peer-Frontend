@@ -92,7 +92,7 @@ describe('쪽지 페이지', () => {
     })
   })
 
-  test('targetId와 converstationId에 해당하는 쪽지 데이터를 보여준다.', async () => {
+  test('targetId와 conversationId에 해당하는 쪽지 데이터를 보여준다.', async () => {
     await renderPage()
 
     await waitFor(() => {

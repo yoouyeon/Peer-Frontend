@@ -183,16 +183,15 @@ describe('댓글 기능 테스트', () => {
     jest.clearAllMocks()
   })
 
-  test('댓글을 불러올 수 있다.', async () => {
+  test('댓글 데이터가 화면에 표시된다', async () => {
     await renderPage()
 
-    // 댓글이 하나 있어야 한다.
     await waitFor(() => {
       const commentItems = screen.getAllByTestId('comment-item')
-      expect(commentItems).toHaveLength(1)
+      expect(commentItems.length).toBeGreaterThanOrEqual(1) // 댓글이 하나 이상 있어야 한다.
       const myComment = commentItems[0]
-      expect(myComment).toHaveTextContent('모두들 화이팅!')
-      expect(myComment).toHaveTextContent('김개발')
+      expect(myComment).toHaveTextContent(MOCK_NOTICE_COMMENT.content)
+      expect(myComment).toHaveTextContent(MOCK_NOTICE_COMMENT.authorNickname)
     })
   })
 

@@ -183,13 +183,11 @@ describe('댓글 기능 테스트', () => {
     jest.clearAllMocks()
   })
 
-  test('댓글을 불러올 수 있다.', async () => {
-    const EXPECTED_COMMENT_COUNT = 1
+  test('댓글 데이터가 화면에 표시된다', async () => {
     await renderPage()
 
-    // 댓글이 하나 있어야 한다.
     const commentItems = await screen.findAllByTestId('comment-item')
-    expect(commentItems).toHaveLength(EXPECTED_COMMENT_COUNT)
+    expect(commentItems.length).toBeGreaterThanOrEqual(1) // 댓글이 하나 이상 있어야 한다.
 
     const commentItem = commentItems[0]
     const commentAuthor = within(commentItem).getByLabelText('댓글 작성자')

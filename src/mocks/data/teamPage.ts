@@ -10,11 +10,50 @@ export const POST_TYPE = {
   NOTICE: 'notice',
 } as const
 export const MOCK_TEAM_ID = 1
-export const MOCK_NOTICE_ID = 1
-export const MOCK_POST_ID = 2
 export const MOCK_BOARD_ID = 1
-export const MOCK_NOTICE_COMMENT_ID = 1
-export const MOCK_POST_COMMENT_ID = 2
+
+export const MOCK_NOTICE: MockPost = {
+  type: POST_TYPE.NOTICE,
+  postId: 1,
+  title: '첫번째 공지사항',
+  nickname: '김개발',
+  hit: 100,
+  date: new Date('2025-05-20'),
+  content: '다들 안녕하세요! 앞으로 이곳에 스터디 공지사항을 올릴 예정입니다.',
+  isAuthor: false,
+} as const
+
+export const MOCK_POST: MockPost = {
+  type: POST_TYPE.POST,
+  postId: 2,
+  title: '첫번째 게시글',
+  nickname: '김개발',
+  hit: 100,
+  date: new Date('2025-05-20'),
+  content:
+    '안녕하세요! 첫번째 게시글입니다. 스터디 관련 질문이나 의견을 나누는 공간이예요.',
+  isAuthor: false,
+} as const
+
+export const MOCK_NOTICE_COMMENT: ITeamComment = {
+  commentId: 1,
+  authorImage: '',
+  authorNickname: '김개발',
+  content: '모두들 화이팅!',
+  createAt: new Date('2025-05-21T14:04:04.221961'),
+  authorId: 1,
+  isAuthor: false,
+} as const
+
+export const MOCK_POST_COMMENT: ITeamComment = {
+  commentId: 2,
+  authorImage: '',
+  authorNickname: '김개발',
+  content: '자유롭게 의견을 남겨주세요!',
+  createAt: new Date('2025-05-21T14:04:04.221961'),
+  authorId: 1,
+  isAuthor: false,
+} as const
 
 // ANCHOR - 타입 정의
 export type PostType = (typeof POST_TYPE)[keyof typeof POST_TYPE]
@@ -52,66 +91,20 @@ class MockPostDataStore {
 
   private initializePosts() {
     // 공지사항
-    this.posts.set(MOCK_NOTICE_ID, {
-      type: POST_TYPE.NOTICE,
-      postId: MOCK_NOTICE_ID,
-      title: '첫번째 공지사항',
-      nickname: '김개발',
-      hit: 100,
-      date: new Date('2025-05-20'),
-      content:
-        '다들 안녕하세요! 앞으로 이곳에 스터디 공지사항을 올릴 예정입니다.',
-      isAuthor: false,
-    })
+    this.posts.set(MOCK_NOTICE.postId, MOCK_NOTICE)
 
     // 일반 게시글
-    this.posts.set(mockPostIdGenerator.getNextPostId(), {
-      type: POST_TYPE.POST,
-      postId: MOCK_POST_ID,
-      title: '첫번째 게시글',
-      nickname: '김개발',
-      hit: 100,
-      date: new Date('2025-05-20'),
-      content:
-        '안녕하세요! 첫번째 게시글입니다. 스터디 관련 질문이나 의견을 나누는 공간이예요.',
-      isAuthor: false,
-    })
+    this.posts.set(MOCK_POST.postId, MOCK_POST)
   }
 
   private initializeComments() {
     this.comments.set(
-      MOCK_NOTICE_ID,
-      new Map([
-        [
-          MOCK_NOTICE_COMMENT_ID,
-          {
-            commentId: MOCK_NOTICE_COMMENT_ID,
-            authorImage: '',
-            authorNickname: '김개발',
-            content: '모두들 화이팅!',
-            createAt: new Date('2025-05-21T14:04:04.221961'),
-            authorId: 1,
-            isAuthor: false,
-          },
-        ],
-      ]),
+      MOCK_NOTICE.postId,
+      new Map([[MOCK_NOTICE_COMMENT.commentId, MOCK_NOTICE_COMMENT]]),
     )
     this.comments.set(
-      MOCK_POST_ID,
-      new Map([
-        [
-          MOCK_POST_COMMENT_ID,
-          {
-            commentId: MOCK_POST_COMMENT_ID,
-            authorImage: '',
-            authorNickname: '김개발',
-            content: '자유롭게 의견을 남겨주세요!',
-            createAt: new Date('2025-05-21T14:04:04.221961'),
-            authorId: 1,
-            isAuthor: false,
-          },
-        ],
-      ]),
+      MOCK_POST.postId,
+      new Map([[MOCK_POST_COMMENT.commentId, MOCK_POST_COMMENT]]),
     )
   }
 

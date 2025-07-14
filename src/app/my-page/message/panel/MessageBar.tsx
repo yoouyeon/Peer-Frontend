@@ -54,7 +54,7 @@ export const ContainerHeader = ({
           message="관리"
         />
       ) : (
-        <IconButton onClick={openNewMessageModal}>
+        <IconButton onClick={openNewMessageModal} aria-label={'새 쪽지'}>
           <PlusIcon width={'1.5rem'} height={'1.5rem'} />
         </IconButton>
       )}

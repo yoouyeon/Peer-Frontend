@@ -12,11 +12,11 @@ if (!global.crypto) {
 if (!global.crypto.randomUUID) {
   global.crypto.randomUUID = () => randomUUID()
 }
-
 // next/navigation
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
   useSearchParams: jest.fn(),
+  useParams: jest.fn(),
 }))
 
 beforeAll(() => {

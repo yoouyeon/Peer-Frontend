@@ -36,6 +36,7 @@ const CuModal = ({
   return (
     <Modal open={open} onClose={onClose} keepMounted={!!keepMounted}>
       <Stack
+        data-testid="modal-wrapper"
         spacing={'1.5rem'}
         sx={{ ...getModalWrapperStyle(isPc, mobileFullSize) }}
       >

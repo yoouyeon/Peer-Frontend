@@ -99,7 +99,7 @@ const MessageContainer = ({
           <ManageBar
             isSelectedAll={isSelectedAll(messageList)}
             handleSelectAll={() =>
-              selectAll(messageList.map((message) => message.targetId))
+              selectAll(messageList.map((message) => message.conversationId))
             }
             handleUnselectAll={unselectAll}
             handleDelete={handleDelete}

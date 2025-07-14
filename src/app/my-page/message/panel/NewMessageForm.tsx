@@ -4,6 +4,7 @@ import useAxiosWithAuth from '@/api/config'
 import useModal from '@/hook/useModal'
 import { IMessageListData, IMessageTarget } from '@/types/IMessage'
 import CuTextModal from '@/components/CuTextModal'
+import API_PATH from '@/constant/apiPath'
 import useToast from '@/states/useToast'
 import * as style from './NewMessageForm.style'
 
@@ -59,7 +60,7 @@ const NewMessageForm = ({
           content: content,
         }
         const response = await axiosInstance.post(
-          '/api/v1/message/new-message',
+          API_PATH.message.newMessage,
           reqBody,
         )
         setContent('')

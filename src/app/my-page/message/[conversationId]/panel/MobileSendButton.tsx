@@ -67,6 +67,7 @@ const MobileSendButton = ({
           onClick={openModal}
           disabled={disabled}
           sx={style.mobileSendIconButton}
+          aria-label="쪽지 보내기"
         >
           <SendIcon />
         </Fab>

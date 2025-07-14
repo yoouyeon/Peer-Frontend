@@ -76,6 +76,7 @@ const SwappableMessageItem = ({
   return (
     <ListItem
       disablePadding
+      data-testid="message-item"
       sx={{
         ...style.swappableWrapper,
         transform: `translateX(${touchState.diffLength})`,

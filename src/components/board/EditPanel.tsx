@@ -83,6 +83,7 @@ export const EditForm = ({
         <Stack spacing={'0.5rem'}>
           <Typography variant={'CaptionEmphasis'}>제목</Typography>
           <TextField
+            key={isLoading ? 'loading' : 'loaded'}
             inputRef={titleRef}
             name={'post-title'}
             placeholder={'제목을 입력해주세요.'}

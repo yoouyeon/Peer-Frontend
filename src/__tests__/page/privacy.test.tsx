@@ -1,20 +1,8 @@
 import Privacy from '@/app/privacy/page'
-import {
-  render,
-  waitFor,
-  screen,
-  act,
-  RenderResult,
-  fireEvent,
-} from '@testing-library/react'
+import { render, waitFor, screen, RenderResult } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
-
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-  useSearchParams: jest.fn(),
-}))
 
 const CHECKBOX_LABELS = {
   ALL_AGREE: '전체동의',

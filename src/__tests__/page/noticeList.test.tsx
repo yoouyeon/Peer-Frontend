@@ -5,7 +5,7 @@ import { http, HttpResponse } from 'msw'
 import TeamNotice from '@/app/teams/[id]/notice/@list/page'
 import useTeamPageState from '@/states/useTeamPageState'
 import {
-  MOCK_NOTICE_ID,
+  MOCK_NOTICE,
   MOCK_TEAM_ID,
   mockPostDataStore,
   POST_TYPE,
@@ -15,9 +15,6 @@ import { server } from '@/mocks/server'
 import HTTP_STATUS from '@/constant/httpStatus'
 import API_PATH from '@/constant/apiPath'
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}))
 jest.mock('@/states/useAuthStore', () => ({
   getState: () => ({
     accessToken: MOCK_ACCESS_TOKEN,
@@ -205,7 +202,7 @@ describe('사용자 인터렉션 테스트', () => {
     const firstPost = screen.getAllByTestId('post-list-item')[0]
     await userEvent.click(firstPost)
 
-    expect(setNoticeSpy).toHaveBeenCalledWith('DETAIL', MOCK_NOTICE_ID)
+    expect(setNoticeSpy).toHaveBeenCalledWith('DETAIL', MOCK_NOTICE.postId)
     expect(useTeamPageState.getState().boardType).toBe('DETAIL')
   })
 })

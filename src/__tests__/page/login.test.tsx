@@ -23,10 +23,6 @@ const mockAuthStore = {
   logout: jest.fn(),
 }
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-  useSearchParams: jest.fn(),
-}))
 jest.mock('@/states/useToast')
 jest.mock('@/states/useAuthStore', () => {
   return Object.assign(

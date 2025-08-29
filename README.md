@@ -20,21 +20,6 @@
 
 #### Back-end : java, spring, mySQL, mongoDB
 
-### 협업을 위한 문서들
-
-**기능정의서** https://docs.google.com/spreadsheets/d/1hV6dizSpFn_dMCbVjFT59eQy7oTNmfK59LVYpfmYhAo/edit?usp=sharing
-
-**세부 기획 정의서** https://docs.google.com/spreadsheets/d/1Dq1gftt09NmDohKkpLfPB9RuKYkbsOXc_iIj7t4yZiM/edit?usp=sharing
-
-**프로토 타입**
-https://www.figma.com/file/St064d90S4S7KJU33gjtzO/Peer-Design?type=design&node-id=4297%3A20043&mode=design&t=UqlnjVT9yWuMNCyQ-1
-
-**와이어프레임**
-https://www.figma.com/file/St064d90S4S7KJU33gjtzO/Peer-Design?type=design&node-id=170%3A9803&mode=design&t=UqlnjVT9yWuMNCyQ-1
-
-**세부 디자인**
-https://www.figma.com/file/St064d90S4S7KJU33gjtzO/Peer-Design?type=design&node-id=1%3A255&mode=design&t=UqlnjVT9yWuMNCyQ-1
-
 **특이사항**
 
 - peer UI/UX 디자인 가이드 → 디자인시스템 구축 : 일관되지 않고, 중복되는 비효율적인 작업, 확장성 부족의 문제들을 해결하기 위해 디자인 가이드 기반으로 디자인 공통컴포넌트를 제작하였습니다.
@@ -75,3 +60,11 @@ https://www.figma.com/file/St064d90S4S7KJU33gjtzO/Peer-Design?type=design&node-i
 
 - UI/UX, 디자인 시스템 : 이보람, 양채윤
 - 책자 디자인 : 조하연
+
+## 📑 프로젝트 문서
+
+- [기능 정의서](https://docs.google.com/spreadsheets/d/1hV6dizSpFn_dMCbVjFT59eQy7oTNmfK59LVYpfmYhAo/edit?usp=sharing)
+- [세부 기획 정의서](https://docs.google.com/spreadsheets/d/1Dq1gftt09NmDohKkpLfPB9RuKYkbsOXc_iIj7t4yZiM/edit?usp=sharing)
+- [프로토 타입](https://www.figma.com/file/St064d90S4S7KJU33gjtzO/Peer-Design?type=design&node-id=4297%3A20043&mode=design&t=UqlnjVT9yWuMNCyQ-1)
+- [와이어프레임](https://www.figma.com/file/St064d90S4S7KJU33gjtzO/Peer-Design?type=design&node-id=170%3A9803&mode=design&t=UqlnjVT9yWuMNCyQ-1)
+- [세부 디자인](https://www.figma.com/file/St064d90S4S7KJU33gjtzO/Peer-Design?type=design&node-id=1%3A255&mode=design&t=UqlnjVT9yWuMNCyQ-1)

@@ -1,14 +1,36 @@
-# 동료를 찾는 가장 빠른 선택 peer
+# 동료를 찾는 가장 빠른 선택, peer
 
 <div align="center">
   <a href="https://peer-study.notion.site/peer-web-application-4357c6a2739348de9476e09b1f81cfce?pvs=143">🐳 서비스 소개글</a> | <a href="https://drive.google.com/file/d/1yPsjwCqVCJryq3sThUn4MguhNuakDRFa/view?usp=drive_link">🐋 개발 백서</a>
 </div>
 
-# 컨셉 아트
+---
 
-![peer1](https://github.com/joonseong11/Peer-Frontend/assets/87654307/2a92d7df-4595-421a-841a-553c32539ed7)
-![peer2](https://github.com/joonseong11/Peer-Frontend/assets/87654307/12d1fd8a-a334-40bc-8ded-e1f6837f5f1e)
-![peer3](https://github.com/joonseong11/Peer-Frontend/assets/87654307/c3d53d18-98d2-4921-9fec-abf0db6fa670)
+<img width="100%" alt="image" src="https://github.com/user-attachments/assets/f8a1241c-1698-49b8-985c-8280236ead83" />
+
+## 🚀 실행 방법
+
+### 로컬 실행
+
+```bash
+git clone https://github.com/yoouyeon/Peer-Frontend.git
+cd Peer-Frontend
+nvm use
+npm install
+npm run dev
+```
+
+### 테스트 계정
+
+회원 기능을 실행하기 위한 테스트 계정입니다.
+
+- ID: `test@example.com`
+- Password: `Password123!`
+
+### API 안내
+
+이 프로젝트는 실제 서버와 연동되지 않으며, MSW를 활용하여 모킹한 API 응답을 활용하고 있습니다.
+따라서 API를 통해 요청한 데이터와 실제 응답이 다를 수 있습니다.
 
 # 상세
 

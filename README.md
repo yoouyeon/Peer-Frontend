@@ -1,10 +1,8 @@
-# [peer-web-application 소개](https://peer-study.notion.site/peer-web-application-4357c6a2739348de9476e09b1f81cfce)
+# 동료를 찾는 가장 빠른 선택 peer
 
-[소개 페이지 바로가기](https://peer-study.notion.site/peer-web-application-4357c6a2739348de9476e09b1f81cfce)
-
-## [개발백서](https://drive.google.com/file/d/1yPsjwCqVCJryq3sThUn4MguhNuakDRFa/view?usp=drive_link)
-
-[개발백서 링크](https://drive.google.com/file/d/1yPsjwCqVCJryq3sThUn4MguhNuakDRFa/view?usp=drive_link)
+<div align="center">
+  <a href="https://peer-study.notion.site/peer-web-application-4357c6a2739348de9476e09b1f81cfce?pvs=143">🐳 서비스 소개글</a> | <a href="https://drive.google.com/file/d/1yPsjwCqVCJryq3sThUn4MguhNuakDRFa/view?usp=drive_link">🐋 개발 백서</a>
+</div>
 
 # 컨셉 아트
 

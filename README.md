@@ -1,7 +1,7 @@
 # 동료를 찾는 가장 빠른 선택, peer
 
 <div align="center">
-  <a href="https://peer-study.notion.site/peer-web-application-4357c6a2739348de9476e09b1f81cfce?pvs=143">🐳 서비스 소개글</a> | <a href="https://drive.google.com/file/d/1yPsjwCqVCJryq3sThUn4MguhNuakDRFa/view?usp=drive_link">🐋 개발 백서</a>
+  <a href="https://yoouyeon.notion.site/peer-web-application">🐳 서비스 소개글</a> | <a href="https://drive.google.com/file/d/1yPsjwCqVCJryq3sThUn4MguhNuakDRFa/view?usp=drive_link">🐋 개발 백서</a>
 </div>
 
 ---

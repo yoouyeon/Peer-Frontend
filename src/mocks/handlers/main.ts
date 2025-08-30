@@ -113,8 +113,8 @@ export const handlers = [
           case EApiType.SIGN_UP:
             return HttpResponse.json(null, { status: HTTP_STATUS.ok })
           case EApiType.SIGN_IN: {
-            const { userEmail, password } = payload
-            if (!(userEmail === email && password === MOCK_SIGN_UP_PASSWORD)) {
+            const { userEmail } = payload
+            if (!(userEmail === email)) {
               return HttpResponse.json(
                 { message: 'Email 혹은 비밀번호가 잘못되었습니다!' },
                 { status: HTTP_STATUS.unauthorized },

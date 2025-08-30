@@ -30,24 +30,24 @@ npm run dev
 ### API 안내
 
 이 프로젝트는 실제 서버와 연동되지 않으며, MSW를 활용하여 모킹한 API 응답을 활용하고 있습니다.
+
 따라서 API를 통해 요청한 데이터와 실제 응답이 다를 수 있습니다.
 
-# 상세
-
-![image](https://github.com/peer-42seoul/Peer-Frontend/assets/87654307/eec4a32b-3768-49c0-9677-67e4a96455a0)
+## 🏗️ 프로젝트 구조
 
 ### 기술스택
 
-#### Front-end : mui, typescript, react.js, next.js
+|   Category    | Stack                                                                                                                                                                                                                                                                            |
+| :-----------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|   **코어**    | ![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)                |
+| **상태 관리** | ![Zustand](https://img.shields.io/badge/Zustand-764ABC?logo=zustand&logoColor=white) ![SWR](https://img.shields.io/badge/SWR-000000?logo=vercel&logoColor=white)                                                                                                                 |
+| **스타일링**  | ![MUI](https://img.shields.io/badge/MUI-007FFF?logo=mui&logoColor=white)                                                                                                                                                                                                         |
+|  **테스트**   | ![Jest](https://img.shields.io/badge/Jest-C21325?logo=jest&logoColor=white) ![Testing Library](https://img.shields.io/badge/Testing%20Library-E33332?logo=testinglibrary&logoColor=white) ![MSW](https://img.shields.io/badge/MSW-FF6A33?logo=mockserviceworker&logoColor=white) |
+|   **CI/CD**   | ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)                                                                                                                                                                       |
 
-#### Back-end : java, spring, mySQL, mongoDB
+### 아키텍쳐
 
-**특이사항**
-
-- peer UI/UX 디자인 가이드 → 디자인시스템 구축 : 일관되지 않고, 중복되는 비효율적인 작업, 확장성 부족의 문제들을 해결하기 위해 디자인 가이드 기반으로 디자인 공통컴포넌트를 제작하였습니다.
-- 자동화 : 협업툴로 Git, github를 사용하였습니다. 팀원들간의 pr 마다 랜덤으로 팀원이 배정되는 github 자동화 기능을 활용하여 2명의 peer review를 진행 후 approve → merge 순으로 진행하였습니다.
-- CI/CD 로 github Action를 활용하였습니다.
-- 기획팀, 디자이너팀, 개발팀 (프론트, 백엔드) 간의 협업으로 진행된 프로젝트 였습니다. 때문에 협업을 위해 시스템적 요소들을 고안하였습니다. 각 팀에 대표자 (리드)를 두어 대표자끼리 빠른 논의 및 의사결정 위주로 진행되었습니다.
+<img width="100%" alt="image" src="https://github.com/user-attachments/assets/4d34ba7b-eb4d-4851-9266-0c29e8e1d4c2" />
 
 ## 🪐 팀원 소개
 

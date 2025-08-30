@@ -33,8 +33,8 @@ npm run dev
 
 회원 기능을 실행하기 위한 테스트 계정입니다.
 
-- ID: `test@example.com`
-- Password: `Password123!`
+- 예시 ID: `test@example.com`
+- 예시 PW: `Password123!`
 
 ### API 안내
 

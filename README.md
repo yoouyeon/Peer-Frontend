@@ -54,7 +54,7 @@ npm run dev
 |  **테스트**   | ![Jest](https://img.shields.io/badge/Jest-C21325?logo=jest&logoColor=white) ![Testing Library](https://img.shields.io/badge/Testing%20Library-E33332?logo=testinglibrary&logoColor=white) ![MSW](https://img.shields.io/badge/MSW-FF6A33?logo=mockserviceworker&logoColor=white) |
 |   **CI/CD**   | ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)                                                                                                                                                                       |
 
-### 아키텍쳐
+### 아키텍처
 
 <img width="100%" alt="image" src="https://github.com/user-attachments/assets/4d34ba7b-eb4d-4851-9266-0c29e8e1d4c2" />
 

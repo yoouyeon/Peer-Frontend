@@ -2,6 +2,8 @@
 
 <div align="center">
   <a href="https://yoouyeon.notion.site/peer-web-application">🐳 서비스 소개글</a> | <a href="https://drive.google.com/file/d/1yPsjwCqVCJryq3sThUn4MguhNuakDRFa/view?usp=drive_link">🐋 개발 백서</a>
+  <br/><br/>
+  <img src="https://img.shields.io/coderabbit/prs/github/yoouyeon/Peer-Frontend?utm_source=oss&utm_medium=github&utm_campaign=yoouyeon%2FPeer-Frontend&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews" alt="CodeRabbit Pull Request Reviews" />
 </div>
 
 ---
